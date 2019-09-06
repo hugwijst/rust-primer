@@ -1,0 +1,829 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>Rust + TFD</title>
+
+        <link rel="stylesheet" href="reveal.js-3.6.0/css/reveal.css">
+        <link rel="stylesheet" href="reveal.js-3.6.0/css/theme/black.css">
+
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="reveal.js-3.6.0/lib/css/zenburn.css">
+
+        <style type="text/css">
+            .reveal span>code, .inline-code code {
+                line-height: 1.2em;
+                font-size: 0.55em;
+                padding: 5px;
+                width: 100%;
+                display: inline;
+            }
+        </style>
+
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'reveal.js-3.6.0/css/print/pdf.css' : 'reveal.js-3.6.0/css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <h2>Rust for C programmers</h2>
+                    <h3></h3>
+                </section>
+                <section>
+                    <h2>What is Rust?</h2>
+                    <p>
+                        <ul>
+                            <li>Systems programming language</li>
+                            <li>Strong static typing</li>
+                            <li>Guarenteed memory safety<span style="color: red;">*</span></li>
+                            <li>No undefined behavior<span style="color: red;">*</span></li>
+                        </ul>
+                    </p>
+                    <p style="text-align: right;" class="fragment">
+                        <span style="color: red;">*</span>except when using 👻unsafe👻
+                    </p>
+                    <img src="rust-logo-white.svg" style="border: 0; background: 0; box-shadow: unset; margin: auto 0;">
+                    <aside class="notes" data-markdown>
+                        * No dynamic memory management, run-time
+                        * Namespacing, file inclusion, lambdas
+                        * Package manager
+                    </aside>
+                </section>
+                <section>
+                    <h2>Contents</h2>
+                    <ul>
+                        <li>Primitive types</li>
+                        <li>Ownership</li>
+                        <li>Control flow</li>
+                        <li>Custom data types</li>
+                        <li>Error handling</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Primitive types</h2>
+                    <ul class="rust">
+                        <li><span class="rust"><code>bool</code> (<code>true</code>, <code>false</code>)</span></li>
+                        <li><span class="rust">
+                            <code>u8</code>, <code>u16</code>, <code>u32</code>, <code>u64</code>, <code>u128</code>
+                            (<code>12u8</code>, <code>b'a'</code>, <code>65_536u32</code>)
+                        </span></li>
+                        <li><span class="rust">
+                            <code>i8</code>, <code>i16</code>, <code>i32</code>, <code>i64</code>, <code>i128</code>
+                            (<code>0x1EEFi16</code>, <code>-3_000_000_000i64</code>)
+                        </span></li>
+                        <li><span class="rust">
+                            <code>usize</code>, <code>isize</code> (<code>15usize</code>, <code>-12isize</code>)
+                        </span></li>
+                        <li><span class="rust">
+                            <code>f32</code>, <code>f64</code> (<code>1e24f32</code>, <code>0.24f64</code>)
+                        </span></li>
+                        <li><span class="rust">
+                            <code>char</code> (<code>'a'</code>, <code>'💡'</code>)
+                        </span></li>
+                    </ul>
+                    <aside class="notes" data-markdown>
+                        * note suffix
+                        * `b'a'` is an unsigned byte
+                        * `usize`, `isize`: size of a native word on the architecture
+                        * `_` to help readability of numbers
+                        * `char` is a **UTF-8** character, size: 4 bytes!
+                    </aside>
+                </section>
+                <section>
+                    <h2>Assignment</h2>
+                    <pre><code class="rust" data-trim>
+                        fn main() {
+                            let x: u32 = 24u32; // fully explicit
+                            let x = 16u8;       // infered type of `x`
+                            let x: f32 = 12.;   // infered type of `12.`
+                            let x = 42;         // defaults to isize
+                            let x = 42u;        // or usize when unsigned
+                            let x = 42.;        // or f64 when float
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Note: shadowing of local variables
+                    </aside>
+                </section>
+                <section>
+                    <h2>Casting</h2>
+                    <pre><code class="rust" data-trim>
+                        fn main() {
+                            let x: u32 = 12u8;          //< fails to compile!
+                            //           ^^^^ expected u32, found u8
+                            let x: u32 = 12u64;         //< fails to compile!
+                            //           ^^^^^ expected u32, found u64
+                            let x: u32 = 12u64 as u32;  // x == 12
+
+                            let x = 400u16 as u8;       // x == 144
+                            let x = -3i8 as u8;         // x == 253
+                        }
+                    </code></pre>
+                </section>
+                <section>
+                    <h2>Mutability</h2>
+                    <pre><code class="rust" data-trim>
+                        fn main() {
+                            let x = 41;
+                            x = 42;         //< fails to compile!
+                        //  ^^^^^^ cannot assign twice to immutable variable
+                            let x = 42;
+
+                            let mut x = 41;
+                            x = 42;
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Shadowing preferred for non-mutable data
+                    </aside>
+                </section>
+                <section>
+                    <h2>References</h2>
+                    <pre><code class="rust" data-trim>
+                        fn main() {
+                            let x = 41u32;
+                            let y = 42;
+                            let r: &amp;u32 = &amp;x;  assert!(*r == 41);
+                            r = &amp;y;  //< fails to compile!
+                        //  ^^^^^^ cannot assign twice to immutable variable
+
+                            let mut s = &amp;y;    assert!(*r == 42);
+                            s = &amp;x;            assert!(*r == 41);
+                            *s = 4; //< fails to compile!
+                        //  ^^^^^^ `s` is a `&` reference, so the data it refers to
+                        //         cannot be written
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                    </aside>
+                </section>
+                <section>
+                    <h2>Mutable References</h2>
+                    <pre><code class="rust" data-trim>
+                        fn main() {
+                            let x = 41u32;
+                            let r: &amp;mut u32 = &amp;mut x; //< fails to compile!
+                            //                ^^^^^^ cannot borrow as mutable
+
+                            let mut x = 41;
+                            let r: &amp;mut u32 = &amp;mut x;  assert!(*r == 41);
+                            *r = 42;  assert!(*r == 42);
+                            assert!(x == 42);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                    </aside>
+                </section>
+                <section>
+                    <h2>Ownership 1</h2>
+                    <pre><code class="rust" data-noescape data-trim>
+                        fn main() {
+                            let mut x = 41;
+
+                            let r = &amp;x;
+                            <span class="fragment" data-fragment-index="2">//      -- immutable borrow occurs here</span>
+                            let r_mut = &amp;mut x;
+                            <span class="fragment" data-fragment-index="2">//          ^^^^^^ mutable borrow occurs here</span>
+                            assert!(*r == *r_mut); //< fails to compile!
+                            <span class="fragment" data-fragment-index="2">//      -- immutable borrow later used here</span>
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        Either many immutable borrows *OR* one mutable borrow.
+                    </aside>
+                </section>
+                <section>
+                    <h2>Ownership 2</h2>
+                    <pre><code class="rust" data-noescape data-trim>
+                        fn main() {
+                            let mut x = 41;
+
+                            let r_mut = &amp;mut x;
+                            <span class="fragment" data-fragment-index="2">//          ------ borrow of `x` occurs here</span>
+                            assert!(x == *r_mut); //< fails to compile!
+                            <span class="fragment" data-fragment-index="2">//      ^    ------ borrow later used here
+                            //      |
+                            //      use of borrowed `x`</span>
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        No access to borrowed variables.
+                    </aside>
+                </section>
+                <section>
+                    <h2>Ownership 3</h2>
+                    <pre><code class="rust" data-noescape data-trim>
+                        fn main() {
+                            let mut x = 41;
+
+                            let r = &amp;x;
+                        <span class="fragment" data-fragment-index="2">//          -- borrow of `x` occurs here</span>
+                            assert!(x == *r);
+
+                            x = 42;
+                        <span class="fragment" data-fragment-index="2">//  ^^^^^^ assignment to borrowed `x` occurs here</span>
+                            assert!(x == *r); //< fails to compile!
+                        <span class="fragment" data-fragment-index="2">//               -- borrow later used here</span>
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        No access to borrowed variables.
+                    </aside>
+                </section>
+                <section>
+                    <h2>Uninitialized References</h2>
+                    <pre><code class="rust" data-trim>
+                        fn main() {
+                            let r: &amp;u32;
+                            assert!(*r == 4); //< fails to compile!
+                            //      ^^ use of possibly uninitialized `*r`
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Note: shadowing of local variables
+                    </aside>
+                </section>
+                <section>
+                    <h2>Arrays</h2>
+                    <pre><code class="rust" data-trim>
+                        fn main() {
+                            let array: [i32; 3] = [1, 4, -3];
+
+                            assert!(array[0] == 1);
+                            assert!(array[3] == 4); //< Fails to compile!
+
+                            let n = 3;
+                            assert!(array[n] == 4); //< Panics!
+
+                            let all_5s = [5u8; 5];
+                            assert!(all_5s == [5, 5, 5, 5, 5]);
+                            assert!(all_5s.len() == 5);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Array is fixed size.
+                        * In example array stored on stack.
+                        * Needs to be fully initialized!
+                        * Panics on out-of-bounds index access.
+                    </aside>
+                </section>
+                <section>
+                    <h2>Slices</h2>
+                    <pre><code class="rust" data-trim style="max-height: 100%">
+                        fn main() {
+                            let arr1: [i32; 3] = [1, 4, -3];
+
+                            let mut arr_ref: &amp;[i32] = &amp;arr1;
+                            assert!(arr_ref[0] == 1);
+                            assert!(arr_ref[3] == 4); //< Panics!
+
+                            let arr2 = [1, 2, 3, 4, 5];
+                            arr_ref = &amp;arr2;
+                            assert!(*arr_ref == [1, 2, 3, 4, 5]);
+
+                            arr_ref = &amp;arr_ref[2..];
+                            assert!(arr_ref == [3, 4, 5]);
+                            assert!(arr_ref.len() == 3);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Slice: reference to contiguous data **and** length
+                        * Panics on out-of-bounds index access.
+                        * Can create and store subslice with range.
+                        * `*` can often be elided.
+                    </aside>
+                </section>
+                <section>
+                    <h2>String slices</h2>
+                    <pre style="width: initial;"><code class="rust" data-trim>
+                        fn main() {
+                            let hello_world: &str = "Hello World 👋!";
+
+                            assert!(hello_world.len() == 17); // in bytes!
+                            assert!(hello_world.chars().len() == 14);
+
+                            assert!(&hello_world[..5] == "Hello");
+                            assert!(&hello_world[..12] == "Hello World ");
+                            assert!(&hello_world[..13] == "Hello World "); //< Panics!
+
+                            assert!("".len() == 0);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Slice: reference to contiguous data **and** length
+                        * Panics on out-of-bounds index access.
+                        * Can create and store subslice with range.
+                        * `*` can often be elided.
+                    </aside>
+                </section>
+                <section data-markdown class="inline-code">
+                    <textarea data-template>
+                        ## Operators
+
+                        * numeric (`+`, `-`, `*`, `/`, `%`)
+                        * bitwise (`|`, `&`, `^`, `<<`, `>>`)
+                        * comparison (`==`, `!=`, `>`, `<`, `>=`, `<=`)
+                        * logical (`||`, `&&`)
+                        * number negation (`-`)
+                        * boolean negation (`!`)
+                        * number bitwise negation (`!`) <span class="fragment" data-fragment-index="1">🚨</span>
+                        * compound assignment (`+=`, `|=`, etc.)
+                        * **NO**: increment/decrement (`++`, `--`)
+                    </textarea>
+                    <aside class="notes" data-markdown>
+                        * logical operations only on `bool`
+                        * bitwise negation is non-C
+                    </aside>
+                </section>
+                <section>
+                    <h2>Control flow: if</h2>
+                    <pre class="fragment fade-out" data-fragment-index="1" style="position:absolute;width:100%"><code class="rust" data-trim>
+                        fn min(a: usize, b: usize) -> usize {
+                            let ret;
+                            if a < b {
+                                ret = a;
+                            } else {
+                                ret = b;
+                            }
+                            return ret;
+                        }
+
+                        fn main() {
+                            assert!(min(5,8) == 5);
+                        }
+                    </code></pre>
+                    <pre class="fragment current-visible" data-fragment-index="1" style="position:absolute;width:100%"><code class="rust" data-trim>
+                        fn min(a: usize, b: usize) -> usize {
+                            let ret;
+                            if a < b {
+                                ret = a;
+                            } else {
+                                ret = b;
+                            }
+                            ret
+                        }
+
+                        fn main() {
+                            assert!(min(5,8) == 5);
+                        }
+                    </code></pre>
+                    <pre class="fragment current-visible" data-fragment-index="2" style="position:absolute;width:100%"><code class="rust" data-trim data-noescape>
+                        fn min(a: usize, b: usize) -> usize {
+                            let ret <mark>=</mark> if a < b { a } else { b }<mark>;</mark>
+                            ret
+                        }
+
+                        fn main() {
+                            assert!(min(5,8) == 5);
+                        }
+                    </code></pre>
+                    <pre class="fragment fade-in" data-fragment-index="3" style="position:absolute;width:100%"><code class="rust" data-trim data-noescape>
+                        fn min(a: usize, b: usize) -> usize {
+                            if a < b { a } else { b }
+                        }
+
+                        fn main() {
+                            assert!(min(5,8) == 5);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Note: first non-`main` function!
+                        * `if` is and expression, not a statement
+                    </aside>
+                </section>
+                <section>
+                    <h2>Control flow: loop</h2>
+                    <pre><code class="rust" data-trim style="max-height: 450px;">
+                        fn main() {
+                            let start = 3;
+                            let mut x = start;
+
+                            while x > 0 {
+                                println!("down = {}", x);
+                                x -= 1;
+                            }
+
+                            loop {
+                                println!("up = {}", x);
+                                x += 1;
+
+                                if x >= start { break }
+                            }
+                        }
+                    </code></pre>
+                </section>
+                <section>
+                    <h2>Control flow: for-loop</h2>
+                    <pre><code class="rust" data-trim style="max-height: 450px;">
+                        fn main() {
+                            let mut x = 0;
+
+                            for i in 1..5 {
+                                x += i;
+                            }
+
+                            assert!(x == 10);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * `1..5` is a range, 1-inclusive and 5-exclusive
+                        * `for` iterates over een iterator, a range is an iterator
+                    </aside>
+                </section>
+                <section>
+                    <h2>Custom data types</h2>
+                    <ul>
+                        <li>Data type definitions: Enum and Struct</li>
+                        <li>Pattern matching</li>
+                        <li>Method definitions</li>
+                        <li>Traits</li>
+                        <li>Generics</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Struct defintion</h2>
+                    <pre><code class="rust" data-trim style="max-height: 450px;">
+                        struct S {
+                            field1: i32,
+                            field2: f32,
+                        }
+
+                        struct AnotherStruct {
+                            s1: S,
+                            s2: S,
+                        }
+
+                        fn foo(another_s: AnotherStruct) {
+                            if another_s.s1.field1 == another_s.s2.field1 {
+                                println!("field1 matches!");
+                            }
+                        }
+                    </code></pre>
+                </section>
+                <section>
+                    <h2>Struct initialization</h2>
+                    <pre><code class="rust" data-trim style="max-height: 450px;">
+                        struct S {
+                            field1: i32,
+                            field2: f32,
+                        }
+
+                        fn main() {
+                            let s1 = S { field1: 42, field2: 12.0 };
+                            let s2 = S { field2: 18.0, ..s1 };
+                            assert!(s2.field1 == 42 && s2.field2 == 18.0);
+
+                            let s3 = S { field1: 15 }; //< fails to compile!
+                            //       ^ missing `field2`
+                            let s4 = S { }; //< fails to compile!
+                            //       ^ missing `field1`, `field2`
+                        }
+                    </code></pre>
+                </section>
+                <section>
+                    <h2>Tuples</h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        fn div_rem(a: isize, b: isize) -> (isize, isize) {
+                            (a / b, a % b)
+                        }
+
+                        // Tuple Struct
+                        struct Fraction(isize, isize);
+
+                        fn fraction_quotient(f: Fraction) -> isize {
+                            let Fraction(a, b) = f;
+                            let (quot, _) = div_rem(a, b);
+                            quot
+                        }
+
+                        fn main() {
+                            let f = Fraction(1, 2);
+                            assert!(f.0 == 1);
+
+                            let tup = (5, true, 42.); // type: (isize, bool, f64)
+                            assert!(tup.1);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Note: pattern matching in `fraction_quotient`
+                        * Note: `.` access in `main`
+                    </aside>
+                </section>
+                <section>
+                    <h2>New Type</h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        // Single element tuple structs (new types)
+                        struct Time(f32); // in seconds
+                        struct Distance(f32); // in meters
+                        struct Speed(f32); // in km/h
+
+                        fn avg_speed(d: Distance, t: Time) -> Speed {
+                            Speed(d.0 / t.0 * 3.6)
+                        }
+
+                        fn main() {
+                            let d = Distance(402.3);
+                            let t = Time(11.8);
+                            assert!(avg_speed(d, t).0 > 122.5);
+                        }
+                    </code></pre>
+                </section>
+                <section>
+                    <h2>Enums</h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        enum Color {
+                            Red,
+                            Blue,
+                            White,
+                            Black,
+                        }
+
+                        fn rgb(c: Color) -> u32 {
+                            match c {
+                                Color::Red => 0xFF0000,
+                                Color::Blue => 0x0000FF,
+                                Color::White => 0xFFFFFF,
+                                Color::Black => 0x000000,
+                            }
+                        }
+
+                        fn main() {
+                            assert!(rgb(Color::Red) == 0xFF0000);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * `match` is not yet discussed
+                        * `match` is complete
+                    </aside>
+                </section>
+                <section>
+                    <h2>Enums with data</h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        enum Color {
+                            Black,
+                            White,
+                            Other(u32),
+                        }
+
+                        fn rgb(c: Color) -> u32 {
+                            use Color::*;
+                            match c {
+                                White => 0xFFFFFF,
+                                Black => 0x000000,
+                                Other(other_col) => other_col,
+                            }
+                        }
+
+                        fn main() {
+                            assert!(rgb(Color::Black) == 0x000000);
+                            assert!(rgb(Color::Other(0x123456)) == 0x123456);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * use `use` to bring enum names in name space
+                        * pattern matching in `match`
+                    </aside>
+                </section>
+                <section>
+                    <h2>Pattern matching</h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        enum Color { Black, White, Other(Rgba) }
+                        struct Rgba { rgb: u32, a: u8 }
+
+                        use Color::*;
+                        fn opaque(c: Color) -> bool {
+                            match c {
+                                White | Black
+                                  | Other(Rgba { a: 0xFF, .. }) => true,
+                                _ => false,
+                            }
+                        }
+
+                        fn main() {
+                            assert!(opaque(Black) == true);
+                            assert!( opaque(Other(Rgba{a:0xFF, rgb:0})) );
+                            assert!( !opaque(Other(Rgba{a:0x42, rgb:0})) );
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Rgba *after* Color
+                        * No space for `r`,`g`,`b`
+                        * `|` in pattern matching
+                        * Pattern matching in struct
+                        * Catch all: `_`
+                    </aside>
+                </section>
+                <section>
+                    <h2>Option</h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        /// Option in core language
+                        enum Option&lt;T> {
+                            Some(T),
+                            None,
+                        }
+
+                        fn safe_div(a: usize, b: usize) -> Option&lt;usize> {
+                            if b != 0 {
+                                Some(a / b)
+                            } else {
+                                None
+                            }
+                        }
+
+                        fn main() {
+                            assert!(safe_div(1, 0) == None);
+                            assert!(safe_div(1, 2) == Some(0));
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * First generic: explain type AND specific instance
+                    </aside>
+                </section>
+                <section>
+                    <h2>Result</h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        /// Result in core language
+                        enum Result&lt;T, E> {
+                            Ok(T),
+                            Err(E),
+                        }
+
+                        fn non_rem_div(a: usize, b: usize) -> Result&lt;usize, f32> {
+                            if a % b == 0 {
+                                Ok(a / b)
+                            } else {
+                                Err(a as f32 / b as f32)
+                            }
+                        }
+
+                        fn main() {
+                            assert!(non_rem_div(4, 2) == Ok(2));
+                            assert!(non_rem_div(5, 2) == Err(2.5));
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Normally create special error types to indicate what went wrong.
+                    </aside>
+                </section>
+                <section>
+                    <h2>Methods: Constructor</h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        struct Color {r: u8, g: u8, b: u8}
+
+                        impl Color {
+                            fn new(r: u8, g: u8, b: u8) -> Color {
+                                Color { r, g, b }
+                            }
+
+                            fn black() -> Color {
+                                Color { r: 0, g: 0, b: 0 }
+                            }
+                        }
+
+                        fn main() {
+                            assert!(Color::new(0x00, 0x42, 0x00).g == 0x42);
+                            assert!(Color::black().r == 0);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * No `self` argument => static methods
+                        * Both constructors
+                        * No overloading
+                    </aside>
+                </section>
+                <section>
+                    <h2>Methods</h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        struct Color {r: u8, g: u8, b: u8}
+
+                        impl Color {
+                            // ... definitions of `new` and `black` ...
+                            fn intensity(&self) -> u8 {
+                                let r = self.r as u16;
+                                let g = self.g as u16;
+                                let b = self.b as u16;
+                                ((r + g + b) / 3) as u8
+                            }
+                        }
+
+                        fn main() {
+                            let navy_blue = Color::new(0, 0, 128);
+                            assert!(navy_blue.intensity() == 42);
+                            assert!(Color::black().intensity() == 0);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Note &amp; in `&amp;self`. Will come back to it later.
+                    </aside>
+                </section>
+                <section>
+                    <h2>Methods: mutability</h2>
+                    <pre class="fragment fade-out" data-fragment-index="1" style="position:absolute; width: 100%"><code class="rust" data-trim style="max-height: 600px;">
+                        struct Color {r: u8, g: u8, b: u8}
+
+                        impl Color {
+                            // ... definitions of `new` and `white` ...
+                            fn mix(&mut self, other: Color) {
+                                self.r += other.r;
+                                self.g += other.g;
+                                self.b += other.b;
+                            }
+                        }
+
+                        fn main() {
+                            let mut color = Color::new(0, 0, 128);
+                            color.mix(Color::white());
+                            assert!(color.b == 255);
+                        }
+                    </code></pre>
+                    <pre class="fragment current-visible" data-fragment-index="1" style="position:absolute; width: 100%"><code class="rust" data-trim style="max-height: 600px;">
+                        struct Color {r: u8, g: u8, b: u8}
+
+                        impl Color {
+                            // ... definitions of `new` and `white` ...
+                            fn mix(&mut self, other: Color) {
+                                self.r = self.r.saturating_add(other.r);
+                                self.g = self.g.saturating_add(other.g);
+                                self.b = self.b.saturating_add(other.b);
+                            }
+                        }
+
+                        fn main() {
+                            let mut color = Color::new(0, 0, 128);
+                            color.mix(Color::white());
+                            assert!(color.b == 255);
+                        }
+                    </code></pre>
+                    <pre class="fragment fade-in" data-fragment-index="2" style="position:absolute; width: 100%"><code class="rust" data-trim style="max-height: 600px;">
+                        struct Color {r: u8, g: u8, b: u8}
+
+                        impl Color {
+                            // ... definitions of `new` and `white` ...
+                            fn mix(&mut self, other: Color) {
+                                *self = Color {
+                                    r: self.r.saturating_add(other.r),
+                                    g: self.g.saturating_add(other.g),
+                                    b: self.b.saturating_add(other.b),
+                                };
+                            }
+                        }
+
+                        fn main() {
+                            let mut color = Color::new(0, 0, 128);
+                            color.mix(Color::white());
+                            assert!(color.b == 255);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Panics in debug builds!
+                    </aside>
+                </section>
+                <section>
+                    <h2>Ownership</h2>
+                    <ul>
+                        <li>References & Borrowing</li>
+                        <li>Slices</li>
+                        <li>Smart Pointers: Box, Rc, Vec, String</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+
+        <script src="reveal.js-3.6.0/lib/js/head.min.js"></script>
+        <script src="reveal.js-3.6.0/js/reveal.js"></script>
+
+        <script>
+            // More info about config & dependencies:
+            // - https://github.com/hakimel/reveal.js#configuration
+            // - https://github.com/hakimel/reveal.js#dependencies
+            Reveal.initialize({
+                slideNumber: true,
+                dependencies: [
+                    { src: 'reveal.js-3.6.0/plugin/markdown/marked.js' },
+                    { src: 'reveal.js-3.6.0/plugin/markdown/markdown.js' },
+                    { src: 'reveal.js-3.6.0/plugin/notes/notes.js', async: true },
+                    { src: 'reveal.js-3.6.0/plugin/highlight/highlight.js', async: true, callback: function() {
+                        document.querySelectorAll('span>code').forEach((block) => {
+                          hljs.highlightBlock(block);
+                        });
+                        document.querySelectorAll('.inline-code code').forEach((block) => {
+                            hljs.highlightBlock(block);
+                        });
+
+                        hljs.configure({tabsReplace: '  '});
+                        hljs.initHighlightingOnLoad();
+                    } }
+                ]
+            });
+        </script>
+    </body>
+</html>
