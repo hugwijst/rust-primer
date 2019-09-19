@@ -397,7 +397,36 @@
                     </code></pre>
                     <aside class="notes" data-markdown>
                         * Note: first non-`main` function!
+                        * No braces around condition expression
                         * `if` is and expression, not a statement
+                    </aside>
+                </section>
+                <section>
+                    <h2>Closures</h2>
+                    <pre style="width: initial;"><code class="rust" data-trim style="max-height: 500px;">
+                        fn min(a: usize, b: usize) -> usize {
+                            if a < b { a } else { b }
+                        }
+
+                        fn main() {
+                            fn local_min(a: usize, b: usize) -> usize {
+                                if a < b { a } else { b }
+                            }
+                            assert!(min(1, 2) == 1);
+                            assert!(local_min(1, 2) == 1);
+
+                            let closure_min = |a, b| if a < b { a } else { b };
+                            assert!(closure_min(5, 8) == 5);
+
+                            let a = 4;
+                            let min_of_a_and = |b| if a < b { a } else { b };
+                            assert!(min_of_a_and(8) == 4);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Local functions
+                        * Closure captures environment
+                        * Closure useful when passed to function, see later
                     </aside>
                 </section>
                 <section>
@@ -420,6 +449,9 @@
                             }
                         }
                     </code></pre>
+                    <aside class="notes" data-markdown>
+                        * No do-while!
+                    </aside>
                 </section>
                 <section>
                     <h2>Control flow: for-loop</h2>
@@ -437,6 +469,27 @@
                     <aside class="notes" data-markdown>
                         * `1..5` is a range, 1-inclusive and 5-exclusive
                         * `for` iterates over een iterator, a range is an iterator
+                    </aside>
+                </section>
+                <section>
+                    <h2>Iterator: filter + map</h2>
+                    <pre><code class="rust" data-trim style="max-height: 450px;">
+                        fn main() {
+                            let mut x = 0;
+                            for i in (1..10).filter(|x| x % 2 == 0) {
+                                x += i; // i <- [2, 4, 6, 8]
+                            }
+                            assert!(x == 20);
+
+                            x = 0;
+                            for i in (1..5).map(|x| x * 3 + 1)  {
+                                x += i; // i <- [4, 7, 10, 13]
+                            }
+                            assert!(x == 34);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * explain `filter` and `map` methods
                     </aside>
                 </section>
                 <section>
