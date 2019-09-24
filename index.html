@@ -849,10 +849,64 @@
                 <section>
                     <h2>Ownership</h2>
                     <ul>
-                        <li>References & Borrowing</li>
-                        <li>Slices</li>
                         <li>Smart Pointers: Box, Rc, Vec, String</li>
+                        <li>Copying &amp; Moving</li>
                     </ul>
+                </section>
+                <section>
+                    <h2>Box</h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        fn first_hundred_ints() -> Box<[u32; 32]> {
+                            let mut ints = Box::new([0; 32]);
+                            for i in 0..32 {
+                                ints[i as usize] = i;
+                            }
+                            return ints;
+                        }
+
+                        fn main() {
+                            let many_nums = first_hundred_ints();
+                            assert!(many_nums[5] == 5);
+                            let more_nums = first_hundred_ints();
+                            assert!(many_nums == more_nums);
+
+                            use std::mem::{size_of, size_of_val};
+                            assert!(size_of_val(&more_nums) == size_of::&lt;usize>());
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * 32 heap-allocated `u32`s
+                        * Deallocated when falling out of scope
+                        * Size on stack of `Box` is equal to size of a pointer
+                    </aside>
+                </section>
+                <section>
+                    <h2>Vec</h2>
+                    <pre style="width: initial;"><code class="rust" data-trim style="max-height: 600px;">
+                        fn first_n_ints(n: usize) -> Vec&lt;u32> {
+                            let mut ints = Vec::new();
+                            for i in 0..n {
+                                ints.push(i);
+                            }
+                            return ints;
+                        }
+
+                        fn main() {
+                            let mut five_ints = first_n_ints(5);
+                            assert!(five_ints.len() == 5);
+                            assert!(five_ints[4] == 4); //< Panics when out of bounds!
+                            assert!(five_ints.get(5) == None);
+
+                            five_ints.push(42);
+                            assert!(five_ints.len() == 6);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * `Vec`: a contiguous growable array type
+                        * Deallocated when falling out of scope
+                        * Prefer using `Vec::get` to handle out of bounds
+                        * How many length checks in release code?
+                    </aside>
                 </section>
             </div>
         </div>
