@@ -684,6 +684,7 @@
                             None,
                         }
 
+                        // In the core language as: `a.checked_div(b)`.
                         fn safe_div(a: usize, b: usize) -> Option&lt;usize> {
                             if b != 0 {
                                 Some(a / b)
@@ -704,27 +705,31 @@
                 <section>
                     <h2>Result</h2>
                     <pre><code class="rust" data-trim style="max-height: 600px;">
-                        /// Result in core language
+                        /// Result&lt;T, E> in core language
                         enum Result&lt;T, E> {
                             Ok(T),
                             Err(E),
                         }
-
-                        fn non_rem_div(a: usize, b: usize) -> Result&lt;usize, f32> {
-                            if a % b == 0 {
+                        #[derive(PartialEq)]
+                        enum Error { DivByZero, HasRemainder(f32) }
+                        fn non_rem_div(a: usize, b: usize) -> Result&lt;usize, Error> {
+                            if b == 0 {
+                                Err(Error::DivByZero)
+                            } else if a % b == 0 {
                                 Ok(a / b)
                             } else {
-                                Err(a as f32 / b as f32)
+                                Err(Error::HasRemainder(a as f32 / b as f32))
                             }
                         }
-
                         fn main() {
                             assert!(non_rem_div(4, 2) == Ok(2));
-                            assert!(non_rem_div(5, 2) == Err(2.5));
+                            assert!(non_rem_div(5, 0) == Err(Error::DivByZero));
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
-                        * Normally create special error types to indicate what went wrong.
+                        * Contrived example.
+                        * Create special error types to indicate what went wrong.
+                        * Deriving `PartialEq`!
                     </aside>
                 </section>
                 <section>
@@ -838,6 +843,7 @@
                     </code></pre>
                     <aside class="notes" data-markdown>
                         * Panics in debug builds!
+                        * Last slide: ensure error when adding new entry to enum
                     </aside>
                 </section>
                 <section>
