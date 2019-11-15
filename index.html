@@ -424,6 +424,7 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
+                        * Contrived :)
                         * Local functions
                         * Closure captures environment
                         * Closure useful when passed to function, see later
@@ -676,60 +677,10 @@
                     </aside>
                 </section>
                 <section>
-                    <h2>Option</h2>
-                    <pre><code class="rust" data-trim style="max-height: 600px;">
-                        /// Option in core language
-                        enum Option&lt;T> {
-                            Some(T),
-                            None,
-                        }
-
-                        // In the core language as: `a.checked_div(b)`.
-                        fn safe_div(a: usize, b: usize) -> Option&lt;usize> {
-                            if b != 0 {
-                                Some(a / b)
-                            } else {
-                                None
-                            }
-                        }
-
-                        fn main() {
-                            assert!(safe_div(1, 0) == None);
-                            assert!(safe_div(1, 2) == Some(0));
-                        }
-                    </code></pre>
+                    <h2>Methods</h2>
                     <aside class="notes" data-markdown>
-                        * First generic: explain type AND specific instance
-                    </aside>
-                </section>
-                <section>
-                    <h2>Result</h2>
-                    <pre><code class="rust" data-trim style="max-height: 600px;">
-                        /// Result&lt;T, E> in core language
-                        enum Result&lt;T, E> {
-                            Ok(T),
-                            Err(E),
-                        }
-                        #[derive(PartialEq)]
-                        enum Error { DivByZero, HasRemainder(f32) }
-                        fn non_rem_div(a: usize, b: usize) -> Result&lt;usize, Error> {
-                            if b == 0 {
-                                Err(Error::DivByZero)
-                            } else if a % b == 0 {
-                                Ok(a / b)
-                            } else {
-                                Err(Error::HasRemainder(a as f32 / b as f32))
-                            }
-                        }
-                        fn main() {
-                            assert!(non_rem_div(4, 2) == Ok(2));
-                            assert!(non_rem_div(5, 0) == Err(Error::DivByZero));
-                        }
-                    </code></pre>
-                    <aside class="notes" data-markdown>
-                        * Contrived example.
-                        * Create special error types to indicate what went wrong.
-                        * Deriving `PartialEq`!
+                        * Discussed all data types (except fn-pointers)
+                        * Method: tying functions to data types
                     </aside>
                 </section>
                 <section>
@@ -742,7 +693,7 @@
                                 Color { r, g, b }
                             }
 
-                            fn black() -> Color {
+                            fn black() -> Self { // Self == Color
                                 Color { r: 0, g: 0, b: 0 }
                             }
                         }
@@ -753,9 +704,11 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
-                        * No `self` argument => static methods
+                        * No `self` argument => associated (static) methods
                         * Both constructors
-                        * No overloading
+                        * Self == own struct
+                        * No function/method overloading!
+                        * No need to use `Self`!
                     </aside>
                 </section>
                 <section>
@@ -843,7 +796,114 @@
                     </code></pre>
                     <aside class="notes" data-markdown>
                         * Panics in debug builds!
+                        * `&amp;mut self` as `self` is allowed to change
                         * Last slide: ensure error when adding new entry to enum
+                        * `*` operator: dereferencing. Often inferred.
+                    </aside>
+                </section>
+                <section>
+                    <h2>Generics and Traits</h2>
+                    <ul>
+                        <li>Generics: abstracting types</li>
+                        <li>Traits: defining similar behaviors</li>
+                    </ul>
+                    <aside class="notes" data-markdown>
+                        In C++/Java:
+                        * Generics -> Templates
+                        * Traits -> Interfaces
+                    </aside>
+                </section>
+                <section>
+                    <h2>Generic Data Types</h2>
+                    <pre class="fragment fade-out" data-fragment-index="1" style="position:absolute; width:100%;"><code class="rust" data-trim style="max-height: 600px;">
+                        struct ColorU8 {r: u8, g: u8, b: u8}
+
+                        struct ColorU32 {r: u32, g: u32, b: u32}
+
+                        struct ColorF32 {r: f32, g: f32, b: f32}
+                    </code></pre>
+                    <pre class="fragment current-visible" data-fragment-index="1" style="position:absolute;width:100%"><code class="rust" data-trim style="max-height: 600px;">
+                        struct Color&lt;T> { r: T, g: T, b: T }
+
+                        impl&lt;T> Color&lt;T> {
+                            fn new(r: T, g: T, b: T) -> Color&lt;T> {
+                                Color { r, g, b }
+                            }
+                        }
+
+                        fn main() {
+                            assert!(Color::new(0x00, 0x42, 0x00).g == 0x42);
+                            assert!(Color::new(1, 2, 3u8).g == 2u8);
+                            assert!(Color::new(0.2, 0.4, 1.0).r == 0.2);
+                            // assert!(Color::new(0.2, 0.4, 1).r == 0.2);
+                            //                              ^ expected floating-point
+                            //                                number, found integer
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Many types of `Color`, eg for memory reasons
+                        * `Color` is generic over some type `T`
+                        * `T` cans be only a single type per instantiation
+                    </aside>
+                </section>
+                <section>
+                    <h2>Error Handling</h2>
+                </section>
+                <section>
+                    <h2>Option</h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        /// Option in core language
+                        enum Option&lt;T> {
+                            Some(T),
+                            None,
+                        }
+
+                        // In the core language as: `a.checked_div(b)`.
+                        fn safe_div(a: usize, b: usize) -> Option&lt;usize> {
+                            if b != 0 {
+                                Some(a / b)
+                            } else {
+                                None
+                            }
+                        }
+
+                        fn main() {
+                            assert!(safe_div(1, 0) == None);
+                            assert!(safe_div(1, 2) == Some(0));
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * First generic: explain type AND specific instance
+                    </aside>
+                </section>
+                <section>
+                    <h2>Result</h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        /// Result&lt;T, E> in core language
+                        enum Result&lt;T, E> {
+                            Ok(T),
+                            Err(E),
+                        }
+                        #[derive(PartialEq)]
+                        enum Error { DivByZero, HasRemainder(f32) }
+                        fn non_rem_div(a: usize, b: usize) -> Result&lt;usize, Error> {
+                            if b == 0 {
+                                Err(Error::DivByZero)
+                            } else if a % b == 0 {
+                                Ok(a / b)
+                            } else {
+                                Err(Error::HasRemainder(a as f32 / b as f32))
+                            }
+                        }
+                        fn main() {
+                            assert!(non_rem_div(4, 2) == Ok(2));
+                            assert!(non_rem_div(5, 0) == Err(Error::DivByZero));
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Contrived example.
+                        * Create special error types to indicate what went wrong.
+                        * Deriving `PartialEq`!
                     </aside>
                 </section>
                 <section>
@@ -905,7 +965,106 @@
                         * `Vec`: a contiguous growable array type
                         * Deallocated when falling out of scope
                         * Prefer using `Vec::get` to handle out of bounds
-                        * How many length checks in release code?
+                        * How many length checks in release code? 1!
+                    </aside>
+                </section>
+                <section style="width: 115%; left: -7.5%;">
+                    <h2>Moving</h2>
+                    <pre class="fragment fade-out" data-fragment-index="1" style="position:absolute; width: 100%;"><code class="rust" data-trim style="max-height: 600px;">
+                        fn sum(ns: Box&lt;[u32]>) -> u32 {
+                            let mut sum = 0;
+                            for n in ns.iter() {
+                                sum += n;
+                            }
+                            sum
+                        }
+
+                        fn main() {
+                            let nums = Box::new([1, 2, 5, 8, 10]);
+                            let s = sum(nums);
+                            assert!(s == 26);
+                        }
+                    </code></pre>
+                    <pre class="fragment current-visible" data-fragment-index="1" style="position:absolute; width: 100%;"><code class="rust" data-trim style="max-height: 600px;">
+                        fn sum(ns: Box&lt;[u32]>) -> u32 {
+                            let mut sum = 0;
+                            for n in ns.iter() {
+                                sum += n;
+                            }
+                            sum
+                        }
+
+                        fn main() {
+                            let nums = Box::new([1, 2, 5, 8, 10]);
+                            let s = sum(nums);
+                            assert!(s == 26);
+
+                            let nums2 = nums; //?
+                        }
+                    </code></pre>
+                    <pre class="fragment current-visible" data-fragment-index="2" style="position:absolute; width: 100%;"><code class="rust" data-trim style="max-height: 600px;">
+                        fn sum(ns: Box&lt;[u32]>) -> u32 {
+                            let mut sum = 0;
+                            for n in ns.iter() {
+                                sum += n;
+                            }
+                            sum
+                        }
+
+                        fn main() {
+                            let nums = Box::new([1, 2, 5, 8, 10]);
+                            //  ---- move occurs because `nums` has type `std::boxed::Box<[u32; 5]>`,
+                            //  which does not implement the `Copy` trait
+                            let s = sum(nums);
+                            //          ---- value moved here
+                            assert!(s == 26);
+                            let nums2 = nums;
+                            //          ^^^^ value used here after move
+                        }
+                        // error[E0382]: use of moved value: `nums`
+                    </code></pre>
+                    <pre class="fragment current-visible" data-fragment-index="3" style="position:absolute; width: 100%;"><code class="rust" data-trim style="max-height: 600px;">
+                        fn sum(ns: Box&lt;[u32]>) -> u32 {
+                            let mut sum = 0;
+                            for n in ns.iter() {
+                                sum += n;
+                            }
+                            sum
+                        }
+
+                        fn main() {
+                            let nums = Box::new([1, 2, 5, 8, 10]);
+                            let s = sum(nums.clone());
+                            assert!(s == 26);
+
+                            let nums2 = nums;
+                            // let s = sum(nums); //< Illegal!
+                            assert!(sum(nums2) == 26);
+                        }
+                    </code></pre>
+                    <pre class="fragment fade-in" data-fragment-index="4" style="position:absolute; width: 100%;"><code class="rust" data-trim style="max-height: 600px;">
+                        fn sum(ns: &[u32]) -> u32 {
+                            let mut sum = 0;
+                            for n in ns.iter() {
+                                sum += n;
+                            }
+                            sum
+                        }
+
+                        fn main() {
+                            let nums = Box::new([1, 2, 5, 8, 10]);
+                            let s = sum(nums.as_ref());
+                            assert!(s == 26);
+
+                            let nums2 = nums;
+                            // let s = sum(nums.as_ref()); //< Illegal!
+                            assert!(sum(nums2.as_ref()) == 26);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Boxed array (fixed-size) to Boxed slice
+                        * Box deallocated in sum!
+                        * Using `nums` after `sum` call?
                     </aside>
                 </section>
             </div>
