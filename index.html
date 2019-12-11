@@ -494,9 +494,67 @@
                     </aside>
                 </section>
                 <section>
+                    <h2>Code organization</h2>
+                    <ul>
+                        <li>Modules</li>
+                        <li>Visibility</li>
+                        <li>Files</li>
+                        <li>Crates</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Modules</h2>
+                    <pre><code class="rust" data-trim style="max-height: 450px;">
+                        mod math {
+                            pub fn sum_u32(a: u32, b: u32) -> u32 {
+                                a + b
+                            }
+
+                            pub fn sum_f32(a: f32, b: f32) -> f32 {
+                                a + b
+                            }
+                        }
+
+                        fn main() {
+                            assert!(math::sum_u32(15, 5) == 20);
+
+                            use math::sum_f32;
+                            assert!(sum_f32(1.5, 20.5) == 22.0);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * `mode` use for organizing code in different name spaces
+                        * import into current name space using `use`
+                    </aside>
+                </section>
+                <section>
+                    <h2>Visibility</h2>
+                    <pre><code class="rust" data-trim style="max-height: 450px;">
+                        mod math {
+                            pub mod u32 {
+                                pub fn sum_u32(a: u32, b: u32) -> u32 { helper(a, b) }
+                                fn helper(a: u32, b: u32) -> u32 { a + b }
+                            }
+
+                            pub fn sum_f32(a: f32, b: f32) -> f32 { a + b }
+                        }
+
+                        fn main() {
+                            assert!(math::sum_u32(15, 5) == 20);
+
+                            use math::sum_f32;
+                            assert!(sum_f32(1.5, 20.5) == 22.0);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * `mode` use for organizing code in different name spaces
+                        * import into current name space using `use`
+                    </aside>
+                </section>
+                <section>
                     <h2>Custom data types</h2>
                     <ul>
-                        <li>Data type definitions: Enum and Struct</li>
+                        <li>Data type definitions: Struct and Enum</li>
                         <li>Pattern matching</li>
                         <li>Method definitions</li>
                         <li>Traits</li>
@@ -822,7 +880,7 @@
 
                         struct ColorF32 {r: f32, g: f32, b: f32}
                     </code></pre>
-                    <pre class="fragment current-visible" data-fragment-index="1" style="position:absolute;width:100%"><code class="rust" data-trim style="max-height: 600px;">
+                    <pre class="fragment fade-in" data-fragment-index="1" style="position:absolute;width:100%"><code class="rust" data-trim style="max-height: 600px;">
                         struct Color&lt;T> { r: T, g: T, b: T }
 
                         impl&lt;T> Color&lt;T> {
@@ -843,7 +901,54 @@
                     <aside class="notes" data-markdown>
                         * Many types of `Color`, eg for memory reasons
                         * `Color` is generic over some type `T`
-                        * `T` cans be only a single type per instantiation
+                        * `T` can be only a single type per instantiation
+                    </aside>
+                </section>
+                <section>
+                    <h2>Generic Data Types</h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        struct Color&lt;T> { r: T, g: T, b: T }
+                        // definition of Color&lt;T>::new
+
+                        fn intensity(c: &Color&lt;f32>) -> f32 {
+                            (c.r + c.g + c.b) / 3.
+                        }
+
+                        fn main() {
+                            let c: Color&lt;f32> = Color::new(0.2, 0.4, 0.);
+                            assert!(intensity(&c) == 0.2);
+                            assert!(Color::&lt;u32>::new(1, 2, 4).g == 2u32);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * `intensity` expects specific version of `Color`
+                        * Compiler can infer `T`
+                        * Expecitly calling in instantiation of a generic uses `::&lt;T>` syntax
+                        * That syntax is called the turbofish
+                    </aside>
+                </section>
+                <section>
+                    <h2>Traits</h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        struct Color {r: u8, g: u8, b: u8}
+                        trait Mixable {
+                            fn mix(&mut self, other: Self);
+                        }
+
+                        impl Mixable for Color {
+                            fn mix(&mut self, other: Color) {
+                                self.r += other.r; self.g += other.g;
+                                self.b += other.b;
+                            }
+                        }
+
+                        fn mix_with_green(col = )
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * `intensity` expects specific version of `Color`
+                        * Compiler can infer `T`
+                        * Expecitly calling in instantiation of a generic uses `::&lt;T>` syntax
+                        * That syntax is called the turbofish
                     </aside>
                 </section>
                 <section>
