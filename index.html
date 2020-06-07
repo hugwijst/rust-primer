@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-        <title>Rust + TFD</title>
+        <title>Rust Primer</title>
 
         <link rel="stylesheet" href="reveal.js-3.6.0/css/reveal.css">
         <link rel="stylesheet" href="reveal.js-3.6.0/css/theme/black.css">
@@ -666,7 +666,7 @@
                         // Tuple Struct
                         struct Fraction(isize, isize);
 
-                        fn fraction_quotient(f: Fraction) -> isize {
+                        fn get_quotient(f: Fraction) -> isize {
                             let Fraction(a, b) = f;
                             let (quot, _) = div_rem(a, b);
                             quot
@@ -681,7 +681,8 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
-                        * Note: pattern matching in `fraction_quotient`
+                        * Return tuple: type: `(a, b)`
+                        * Note: pattern matching in `get_quotient`
                         * Note: `.` access in `main`
                     </aside>
                 </section>
@@ -729,7 +730,7 @@
                     </code></pre>
                     <aside class="notes" data-markdown>
                         * `match` is not yet discussed
-                        * `match` is complete
+                        * `match` is complete, cannot add more clauses
                     </aside>
                 </section>
                 <section>
@@ -917,13 +918,98 @@
                 <section>
                     <h2>Generics and Traits</h2>
                     <ul>
-                        <li>Generics: abstracting types</li>
                         <li>Traits: defining similar behaviors</li>
+                        <li>Generics: abstracting types</li>
                     </ul>
                     <aside class="notes" data-markdown>
                         In C++/Java:
-                        * Generics -> Templates
                         * Traits -> Interfaces
+                        * Generics -> Templates
+                    </aside>
+                </section>
+                <section>
+                    <h2>Traits</h2>
+                    <pre style="width:100%"><code class="rust" data-trim style="max-height: 600px;">
+                        trait Reacts {
+                            fn react(&self) -> String;
+                        }
+
+                        struct Cat {}
+                        impl Reacts for Cat {
+                            fn react(&self) -> String {
+                                String::from("meow")
+                            }
+                        }
+
+                        struct Parrot { learnt_sentence: String }
+                        impl Reacts for Parrot {
+                            fn react(&self) -> String { self.learnt_sentence.clone() }
+                        }
+
+                        fn main() {
+                            assert_eq!(Cat {}.react(), "meow");
+                            let parrot = Parrot { learnt_sentence: String::from("woof") };
+                            assert_eq!(parrot.react(), "woof");
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * `String` is a heap alocated `str`.
+                        * `Clone::clone` copies data.
+                    </aside>
+                </section>
+                <section>
+                    <h2>Using Traits</h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        trait Reacts {
+                            fn react(&self) -> String;
+                        }
+                        // Definition of `Cat`
+
+                        fn loud_reaction_dynamic(reactor: &dyn Reacts) -> String {
+                            format!("{}!", reactor.react().to_uppercase())
+                        }
+                        fn loud_reaction_generic&lt;R: Reacts&gt;(reactor: &R) -> String {
+                            format!("{}!", reactor.react().to_uppercase())
+                        }
+
+                        fn main() {
+                            let reactor: &dyn Reacts = &Cat {};
+                            assert_eq!(loud_reaction_dynamic(reactor), "MEOW!");
+
+                            assert_eq!(loud_reaction_generic(&Cat {}), "MEOW!");
+                            // vvv   Fails compilation!   vvv
+                            assert_eq!(loud_reaction_generic(reactor), "MEOW!");
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                    </aside>
+                </section>
+
+                <section>
+                    <h2>Generic Data Types</h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        trait Reacts {
+                            fn react(&self) -> String;
+                        }
+
+                        struct LoudReactor&lt;R: Reacts&gt;(R);
+                        impl&lt;R: Reacts&gt; Reacts for LoudReactor&lt;R&gt; {
+                            fn react(&self) -> String {
+                                format!("{}!", self.0.react().to_uppercase())
+                            }
+                        }
+
+                        // Definition of `Cat`
+
+                        fn main() {
+                            let cat = Cat {};
+                            assert_eq!(cat.react(), "meow");
+
+                            let loud_cat = LoudReactor(cat); // : LoudReactor&lt;Cat&gt;
+                            assert_eq!(loud_cat.react(), "MEOW!");
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
                     </aside>
                 </section>
                 <section>
