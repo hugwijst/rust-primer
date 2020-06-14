@@ -953,8 +953,73 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
-                        * `String` is a heap alocated `str`.
-                        * `Clone::clone` copies data.
+                        * `String` is a heap alocated `str`, more later
+                        * `String::clone` is a Trait implemenation, let's look closer
+                    </aside>
+                </section>
+                <section>
+                    <h2>Deriving Traits</h2>
+                    <pre class="fragment fade-out" data-fragment-index="4" style="position:absolute;width:110%"><code class="rust" data-noescape data-trim style="max-height: 600px;">
+                        // in std: `std::clone::Clone`
+                        trait Clone {
+                            fn clone(&self) -> Self;
+                        }
+
+                        struct Parrot { learnt_sentence: String }
+                        impl Clone for Parrot {
+                            fn clone(&self) -> Parrot {
+                                Parrot { learnt_sentence: self.learnt_sentence.clone() }
+                            }
+                        }
+
+                        fn main() {
+                            let parrot = Parrot { learnt_sentence: String::from("woof") };
+                            assert!(parrot == parrot.clone());
+                            <span class="fragment" data-fragment-index="2">// ^^ ERROR: binary operation `==` cannot be applied to type `Parrot`</span>
+                            <span class="fragment" data-fragment-index="3">// ^^ note: an implementation of `std::cmp::PartialEq`</span>
+                            <span class="fragment" data-fragment-index="3">//          might be missing for `Parrot`</span>
+                        }
+                    </code></pre>
+                    <pre class="fragment current-visible" data-fragment-index="4" style="position:absolute;width:110%"><code class="rust" data-noescape data-trim style="max-height: 600px;">
+                        // in std: `std::clone::Clone`
+                        trait Clone {
+                            fn clone(&self) -> Self;
+                        }
+
+                        <mark>#[derive(PartialEq)]</mark>
+                        struct Parrot { learnt_sentence: String }
+                        impl Clone for Parrot {
+                            fn clone(&self) -> Parrot {
+                                Parrot { learnt_sentence: self.learnt_sentence.clone() }
+                            }
+                        }
+
+                        fn main() {
+                            let parrot = Parrot { learnt_sentence: String::from("woof") };
+                            assert!(parrot == parrot.clone());
+                        }
+                    </code></pre>
+                    <pre class="fragment fade-in" data-fragment-index="5" style="position:absolute;width:110%"><code class="rust" data-noescape data-trim style="max-height: 600px;">
+                        // in std: `std::clone::Clone`
+                        trait Clone {
+                            fn clone(&self) -> Self;
+                        }
+
+                        #[derive(PartialEq, <mark>Clone</mark>)]
+                        struct Parrot { learnt_sentence: String }
+
+                        fn main() {
+                            let parrot = Parrot { learnt_sentence: String::from("woof") };
+                            assert!(parrot == parrot.clone());
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Provide our own clone implementation
+                        * Fails: no `==` for `Parrot`
+
+                        * Deriving `PartialEq`: let the compiler generate the code
+                        * For `PartialEq`, equal if *all* fields are equal
+                        * Difference `PartialEq` and `Eq`? f64
                     </aside>
                 </section>
                 <section>
@@ -982,9 +1047,13 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
+                        * `format!` macro to do string formatting
+                        * `_dynamic`'s `reactor` will have v-table, only one piece of code
+                        * `_generic` needs to know type of `R` beforehand
+                        * `_generic` will be monomorphised for each type of `R`
+                        * `&Cat {}` allocates a `Cat` instance on the stack and returns reference to it
                     </aside>
                 </section>
-
                 <section>
                     <h2>Generic Data Types</h2>
                     <pre><code class="rust" data-trim style="max-height: 600px;">
@@ -1010,6 +1079,9 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
+                        * `R: Reacts` puts a bound on `R`, `R` has to implement `Reacts`
+                        * `LoudReactor&lt;A&gt;` is a different type then `LoudReactor&lt;B&gt;`
+                        * Cannot instantiate a `LoudReactor` without type parameter
                     </aside>
                 </section>
                 <section>
