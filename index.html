@@ -1151,7 +1151,7 @@
                 </section>
                 <section>
                     <h2><span><code style="font-size: 1em">?</code> Operator</span></h2>
-                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                    <pre class="fragment fade-out" data-fragment-index="1" style="position:absolute;"><code class="rust" data-trim style="max-height: 600px;">
                         fn solve(problem: Option&lt;u32>) -> Option&lt;u32> {
                             let p = match problem {
                                 Some(p) => p,
@@ -1159,6 +1159,28 @@
                             };
 
                             Some(p * 42)
+                        }
+
+                        fn main() {
+                            assert_eq!(solve(Some(2)), Some(84));
+                            assert_eq!(solve(None), None);
+                        }
+                    </code></pre>
+                    <pre class="fragment current-visible" data-fragment-index="1" style="position:absolute;"><code class="rust" data-trim data-noescape style="max-height: 600px;">
+                        fn solve(problem: Option&lt;u32>) -> Option&lt;u32> {
+                            let p = problem<mark>?</mark>;
+
+                            Some(p * 42)
+                        }
+
+                        fn main() {
+                            assert_eq!(solve(Some(2)), Some(84));
+                            assert_eq!(solve(None), None);
+                        }
+                    </code></pre>
+                    <pre class="fragment fade-in" data-fragment-index="2" style="position:absolute;"><code class="rust" data-trim data-noescape style="max-height: 600px;">
+                        fn solve(problem: Option&lt;u32>) -> Option&lt;u32> {
+                            Some(problem? * 42)
                         }
 
                         fn main() {
