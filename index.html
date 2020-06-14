@@ -1086,6 +1086,11 @@
                 </section>
                 <section>
                     <h2>Error Handling</h2>
+                    <ul>
+                        <li>Option</li>
+                        <li>Result</li>
+                        <li><span><code style="font-size: 1em">?</code></span> Operator</li>
+                    </ul>
                 </section>
                 <section>
                     <h2>Option</h2>
@@ -1142,6 +1147,27 @@
                         * Contrived example.
                         * Create special error types to indicate what went wrong.
                         * Deriving `PartialEq`!
+                    </aside>
+                </section>
+                <section>
+                    <h2><span><code style="font-size: 1em">?</code> Operator</span></h2>
+                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                        fn solve(problem: Option&lt;u32>) -> Option&lt;u32> {
+                            let p = match problem {
+                                Some(p) => p,
+                                None => return None,
+                            };
+
+                            Some(p * 42)
+                        }
+
+                        fn main() {
+                            assert_eq!(solve(Some(2)), Some(84));
+                            assert_eq!(solve(None), None);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * First generic: explain type AND specific instance
                     </aside>
                 </section>
                 <section>
