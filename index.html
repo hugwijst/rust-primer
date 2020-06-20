@@ -131,6 +131,9 @@
                             let x = -3i8 as u8;         // x == 253
                         }
                     </code></pre>
+                    <aside class="notes" data-markdown>
+                        * No implicit conversions or promotions
+                    </aside>
                 </section>
                 <section>
                     <h2>Mutability</h2>
@@ -151,19 +154,32 @@
                 </section>
                 <section>
                     <h2>References</h2>
-                    <pre><code class="rust" data-trim>
+                    <ul>
+                        <li>References and mutability</li>
+                        <li>Ownership</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>References</h2>
+                    <pre style="position:absolute; width: 100%"><code class="rust" data-noescape data-trim style="max-height: 600px;">
                         fn main() {
                             let x = 41u32;
-                            let y = 42;
-                            let r: &amp;u32 = &amp;x;  assert!(*r == 41);
-                            r = &amp;y;  //< fails to compile!
-                        //  ^^^^^^ cannot assign twice to immutable variable
+                            let r: &amp;u32 = &amp;x;
 
-                            let mut s = &amp;y;    assert!(*r == 42);
-                            s = &amp;x;            assert!(*r == 41);
-                            *s = 4; //< fails to compile!
-                        //  ^^^^^^ `s` is a `&` reference, so the data it refers to
-                        //         cannot be written
+                            assert!(x == 41);
+                            assert!(*r == 41);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                    </aside>
+                </section>
+                <section>
+                    <h2>Uninitialized References</h2>
+                    <pre><code class="rust" data-trim>
+                        fn main() {
+                            let r: &amp;u32;
+                            assert!(*r == 4); //< fails to compile!
+                            //      ^^ use of possibly uninitialized `*r`
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
@@ -171,16 +187,41 @@
                 </section>
                 <section>
                     <h2>Mutable References</h2>
+                    <pre style="position:absolute; width: 100%"><code class="rust" data-noescape data-trim style="max-height: 600px;">
+                        fn main() {
+                            let x = 41u32;
+                            let r: &amp;u32 = &amp;x;
+                            assert!(*r == 41);
+                            
+                            <span class="fragment" data-fragment-index="2">let y = 42;</span>
+                        <span class="fragment" data-fragment-index="2">    r = &amp;y;</span><span class="fragment" data-fragment-index="3">  //< fails to compile!</span>
+                        <span class="fragment" data-fragment-index="3">//  ^^^^^^ cannot assign twice to immutable variable</span>
+
+                        <span class="fragment" data-fragment-index="4">    let mut s = &amp;y;    assert!(*s == 42);</span>
+                        <span class="fragment" data-fragment-index="4">    s = &amp;x;            assert!(*s == 41);</span>
+                        <span class="fragment" data-fragment-index="4">    *s = 4; //< fails to compile!</span>
+                        <span class="fragment" data-fragment-index="4">//  ^^^^^^ `s` is a `&` reference, so the data it refers to</span>
+                        <span class="fragment" data-fragment-index="4">//         cannot be written</span>
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                    </aside>
+                </section>
+                <section>
+                    <h2>Reference To Mutable</h2>
                     <pre><code class="rust" data-trim>
                         fn main() {
+                            let mut x = 41;
+                            let r: &amp;mut u32 = &amp;mut x;
+                            assert!(*r == 41);
+                            
+                            *r = 42;
+                            assert!(*r == 42);
+                            assert!(x == 42);
+
                             let x = 41u32;
                             let r: &amp;mut u32 = &amp;mut x; //< fails to compile!
                             //                ^^^^^^ cannot borrow as mutable
-
-                            let mut x = 41;
-                            let r: &amp;mut u32 = &amp;mut x;  assert!(*r == 41);
-                            *r = 42;  assert!(*r == 42);
-                            assert!(x == 42);
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
@@ -243,17 +284,12 @@
                     </aside>
                 </section>
                 <section>
-                    <h2>Uninitialized References</h2>
-                    <pre><code class="rust" data-trim>
-                        fn main() {
-                            let r: &amp;u32;
-                            assert!(*r == 4); //< fails to compile!
-                            //      ^^ use of possibly uninitialized `*r`
-                        }
-                    </code></pre>
-                    <aside class="notes" data-markdown>
-                        * Note: shadowing of local variables
-                    </aside>
+                    <h2>Sequences</h2>
+                    <ul>
+                        <li>Arrays</li>
+                        <li>Slices</li>
+                        <li>Strings</li>
+                    </ul>
                 </section>
                 <section>
                     <h2>Arrays</h2>
@@ -322,10 +358,9 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
-                        * Slice: reference to contiguous data **and** length
-                        * Panics on out-of-bounds index access.
-                        * Can create and store subslice with range.
-                        * `*` can often be elided.
+                        * Strings are comlicated
+                        * `&str` points to a UTF-8 string
+                        * No null-termination
                     </aside>
                 </section>
                 <section data-markdown class="inline-code">
@@ -346,6 +381,15 @@
                         * logical operations only on `bool`
                         * bitwise negation is non-C
                     </aside>
+                </section>
+                <section>
+                    <h2>Control Flow</h2>
+                    <ul>
+                        <li>If</li>
+                        <li>Loops</li>
+                        <li>Functions and Closures</li>
+                        <li>Iterators</li>
+                    </ul>
                 </section>
                 <section>
                     <h2>Control flow: if</h2>
@@ -399,9 +443,52 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
-                        * Note: first non-`main` function!
+                        * first non-`main` function!
                         * No braces around condition expression
-                        * `if` is and expression, not a statement
+                        * `if` is an expression, not a statement
+                    </aside>
+                </section>
+                <section>
+                    <h2>Control flow: loop</h2>
+                    <pre><code class="rust" data-trim style="max-height: 450px;">
+                        fn main() {
+                            let start = 3;
+                            let mut x = start;
+
+                            while x > 0 {
+                                println!("down = {}", x);
+                                x -= 1;
+                            }
+
+                            loop {
+                                println!("up = {}", x);
+                                x += 1;
+
+                                if x >= start { break }
+                            }
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * First `println!`!
+                        * No do-while!
+                    </aside>
+                </section>
+                <section>
+                    <h2>Control flow: for-loop</h2>
+                    <pre><code class="rust" data-trim style="max-height: 450px;">
+                        fn main() {
+                            let mut x = 0;
+
+                            for i in 1..5 {
+                                x += i;
+                            }
+
+                            assert!(x == 10);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * `1..5` is a range, 1-inclusive and 5-exclusive
+                        * `for` iterates over een iterator, a range is an iterator
                     </aside>
                 </section>
                 <section>
@@ -431,48 +518,6 @@
                         * Local functions
                         * Closure captures environment
                         * Closure useful when passed to function, see later
-                    </aside>
-                </section>
-                <section>
-                    <h2>Control flow: loop</h2>
-                    <pre><code class="rust" data-trim style="max-height: 450px;">
-                        fn main() {
-                            let start = 3;
-                            let mut x = start;
-
-                            while x > 0 {
-                                println!("down = {}", x);
-                                x -= 1;
-                            }
-
-                            loop {
-                                println!("up = {}", x);
-                                x += 1;
-
-                                if x >= start { break }
-                            }
-                        }
-                    </code></pre>
-                    <aside class="notes" data-markdown>
-                        * No do-while!
-                    </aside>
-                </section>
-                <section>
-                    <h2>Control flow: for-loop</h2>
-                    <pre><code class="rust" data-trim style="max-height: 450px;">
-                        fn main() {
-                            let mut x = 0;
-
-                            for i in 1..5 {
-                                x += i;
-                            }
-
-                            assert!(x == 10);
-                        }
-                    </code></pre>
-                    <aside class="notes" data-markdown>
-                        * `1..5` is a range, 1-inclusive and 5-exclusive
-                        * `for` iterates over een iterator, a range is an iterator
                     </aside>
                 </section>
                 <section>
