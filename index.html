@@ -114,7 +114,7 @@
                 </section>
                 <section>
                     <h2>Assignment</h2>
-                    <pre><code class="rust" data-trim>
+                    <pre><code class="rust" data-line-numbers data-trim>
                         fn main() {
                             let x: u32 = 24u32; // fully explicit
                             let x = 16u8;       // infered type of `x`
@@ -133,7 +133,7 @@
                 </section>
                 <section>
                     <h2>Casting</h2>
-                    <pre><code class="rust" data-trim>
+                    <pre><code class="rust" data-line-numbers data-trim>
                         fn main() {
                             let x: u32 = 12u8;          //< fails to compile!
                             //           ^^^^ expected u32, found u8
@@ -151,7 +151,7 @@
                 </section>
                 <section>
                     <h2>Mutability</h2>
-                    <pre><code class="rust" data-trim>
+                    <pre><code class="rust" data-line-numbers data-trim>
                         fn main() {
                             let x = 41;
                             x = 42;         //< fails to compile!
@@ -190,7 +190,7 @@
                 </section>
                 <section>
                     <h2>Uninitialized References</h2>
-                    <pre><code class="rust" data-trim>
+                    <pre><code class="rust" data-line-numbers data-trim>
                         fn main() {
                             let r: &amp;u32;
                             assert!(*r == 4); //< fails to compile!
@@ -202,7 +202,7 @@
                 </section>
                 <section>
                     <h2>Mutable References</h2>
-                    <pre style="position:absolute; width: 100%"><code class="rust" data-noescape data-trim style="max-height: 600px;">
+                    <pre style="position:absolute; width: 100%"><code class="rust" data-line-numbers data-noescape data-trim style="max-height: 600px;">
                         fn main() {
                             let x = 41u32;
                             let r: &amp;u32 = &amp;x;
@@ -224,7 +224,7 @@
                 </section>
                 <section>
                     <h2>Reference To Mutable</h2>
-                    <pre><code class="rust" data-noescape data-trim>
+                    <pre><code class="rust" data-line-numbers data-noescape data-trim>
                         fn main() {
                             let mut x = 41;
                             let r: &amp;mut u32 = &amp;mut x;
@@ -244,7 +244,7 @@
                 </section>
                 <section>
                     <h2>Ownership 1</h2>
-                    <pre><code class="rust" data-noescape data-trim>
+                    <pre><code class="rust" data-line-numbers data-noescape data-trim>
                         fn main() {
                             let mut x = 41;
 
@@ -262,7 +262,7 @@
                 </section>
                 <section>
                     <h2>Ownership 2</h2>
-                    <pre><code class="rust" data-noescape data-trim>
+                    <pre><code class="rust" data-line-numbers data-noescape data-trim>
                         fn main() {
                             let mut x = 41;
 
@@ -280,7 +280,7 @@
                 </section>
                 <section>
                     <h2>Ownership 3</h2>
-                    <pre><code class="rust" data-noescape data-trim>
+                    <pre><code class="rust" data-line-numbers data-noescape data-trim>
                         fn main() {
                             let mut x = 41;
 
@@ -308,7 +308,7 @@
                 </section>
                 <section>
                     <h2>Arrays</h2>
-                    <pre><code class="rust" data-trim>
+                    <pre><code class="rust" data-line-numbers data-trim>
                         fn main() {
                             let array: [i32; 3] = [1, 4, -3];
 
@@ -332,7 +332,7 @@
                 </section>
                 <section>
                     <h2>Slices</h2>
-                    <pre><code class="rust" data-trim style="max-height: 100%">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 100%">
                         fn main() {
                             let arr1: [i32; 3] = [1, 4, -3];
 
@@ -358,7 +358,7 @@
                 </section>
                 <section>
                     <h2>String slices</h2>
-                    <pre style="width: initial;"><code class="rust" data-trim>
+                    <pre style="width: initial;"><code class="rust" data-line-numbers data-trim>
                         fn main() {
                             let hello_world: &str = "Hello World 👋!";
 
@@ -422,7 +422,7 @@
                 </section>
                 <section>
                     <h2>Control flow: if</h2>
-                    <pre class="fragment fade-out" data-fragment-index="1" style="position:absolute;width:100%"><code class="rust" data-trim>
+                    <div class="fragment fade-out" data-fragment-index="1"><pre style="position:absolute;width:100%"><code class="rust" data-line-numbers data-trim>
                         fn min(a: usize, b: usize) -> usize {
                             let ret;
                             if a < b {
@@ -436,8 +436,8 @@
                         fn main() {
                             assert!(min(5,8) == 5);
                         }
-                    </code></pre>
-                    <pre class="fragment current-visible" data-fragment-index="1" style="position:absolute;width:100%"><code class="rust" data-trim>
+                    </code></pre></div>
+                    <div class="fragment current-visible" data-fragment-index="1"><pre style="position:absolute;width:100%"><code class="rust" data-line-numbers data-trim>
                         fn min(a: usize, b: usize) -> usize {
                             let ret;
                             if a < b {
@@ -451,8 +451,8 @@
                         fn main() {
                             assert!(min(5,8) == 5);
                         }
-                    </code></pre>
-                    <pre class="fragment current-visible" data-fragment-index="2" style="position:absolute;width:100%"><code class="rust" data-trim data-noescape>
+                    </code></pre></div>
+                    <div class="fragment current-visible" data-fragment-index="2"><pre style="position:absolute;width:100%"><code class="rust" data-line-numbers data-trim data-noescape>
                         fn min(a: usize, b: usize) -> usize {
                             let ret <mark>=</mark> if a < b { a } else { b }<mark>;</mark>
                             ret
@@ -461,8 +461,8 @@
                         fn main() {
                             assert!(min(5,8) == 5);
                         }
-                    </code></pre>
-                    <pre class="fragment fade-in" data-fragment-index="3" style="position:absolute;width:100%"><code class="rust" data-trim data-noescape>
+                    </code></pre></div>
+                    <div class="fragment fade-in" data-fragment-index="3"><pre style="position:absolute;width:100%"><code class="rust" data-line-numbers data-trim data-noescape>
                         fn min(a: usize, b: usize) -> usize {
                             if a < b { a } else { b }
                         }
@@ -470,7 +470,7 @@
                         fn main() {
                             assert!(min(5,8) == 5);
                         }
-                    </code></pre>
+                    </code></pre></div>
                     <aside class="notes" data-markdown>
                         * first non-`main` function!
                         * No braces around condition expression
@@ -479,7 +479,7 @@
                 </section>
                 <section>
                     <h2>Control flow: loop</h2>
-                    <pre><code class="rust" data-trim style="max-height: 450px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 450px;">
                         fn main() {
                             let start = 3;
                             let mut x = start;
@@ -504,7 +504,7 @@
                 </section>
                 <section>
                     <h2>Control flow: for-loop</h2>
-                    <pre><code class="rust" data-trim style="max-height: 450px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 450px;">
                         fn main() {
                             let mut x = 0;
 
@@ -522,7 +522,7 @@
                 </section>
                 <section>
                     <h2>Lambdas & Closures</h2>
-                    <pre style="width: initial;"><code class="rust" data-trim style="max-height: 500px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 500px;">
                         fn min(a: usize, b: usize) -> usize {
                             if a < b { a } else { b }
                         }
@@ -551,7 +551,7 @@
                 </section>
                 <section>
                     <h2>Iterator: filter + map</h2>
-                    <pre><code class="rust" data-trim style="max-height: 450px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 450px;">
                         fn main() {
                             let mut x = 0;
                             for i in (1..10).filter(|x| x % 2 == 0) {
@@ -592,7 +592,7 @@
                 </section>
                 <section>
                     <h2>Modules</h2>
-                    <pre><code class="rust" data-trim style="max-height: 450px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 450px;">
                         mod math {
                             pub fn sum_u32(a: u32, b: u32) -> u32 {
                                 a + b
@@ -617,7 +617,7 @@
                 </section>
                 <section>
                     <h2>Visibility</h2>
-                    <pre style="width: initial"><code class="rust" data-trim style="max-height: 560px;">
+                    <pre style="width: initial"><code class="rust" data-line-numbers data-trim style="max-height: 560px;">
                         mod math {
                             pub mod u32 {
                                 pub fn sum(a: u32, b: u32) -> u32 { helper(a, b) }
@@ -644,7 +644,7 @@
                 </section>
                 <section>
                     <h2>Exporting</h2>
-                    <pre style="width: initial"><code class="rust" data-trim style="max-height: 550px;">
+                    <pre style="width: initial"><code class="rust" data-line-numbers data-trim style="max-height: 550px;">
                         mod math {
                             mod u32 {
                                 pub fn sum(a: u32, b: u32) -> u32 { helper(a, b) }
@@ -670,7 +670,7 @@
                 </section>
                 <section>
                     <h2>Files</h2>
-                    <pre style="width: initial">math.rs:<code class="rust" data-trim style="max-height: 550px;">
+                    <pre style="width: initial">math.rs:<code class="rust" data-line-numbers data-trim style="max-height: 550px;">
                         mod u32 {
                             pub fn sum(a: u32, b: u32) -> u32 { helper(a, b) }
                             fn helper(a: u32, b: u32) -> u32 { a + b }
@@ -679,7 +679,7 @@
                         pub use self::u32::sum as sum_u32;
                         pub fn sum_f32(a: f32, b: f32) -> f32 { a + b }
                     </code></pre>
-                    <pre style="width: initial">bin.rs:<code class="rust" data-trim style="max-height: 550px;">
+                    <pre style="width: initial">bin.rs:<code class="rust" data-line-numbers data-trim style="max-height: 550px;">
                         mod math;
 
                         fn main() {
@@ -715,7 +715,7 @@
                 </section>
                 <section>
                     <h2>Struct initialization</h2>
-                    <pre><code class="rust" data-trim style="max-height: 450px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 450px;">
                         struct S {
                             field1: i32,
                             field2: f32,
@@ -735,7 +735,7 @@
                 </section>
                 <section>
                     <h2>Struct nesting</h2>
-                    <pre><code class="rust" data-trim style="max-height: 450px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 450px;">
                         struct S {
                             field1: i32,
                             field2: f32,
@@ -755,7 +755,7 @@
                 </section>
                 <section>
                     <h2>Tuples</h2>
-                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         // Tuple Struct
                         struct Fraction(isize, isize);
 
@@ -786,7 +786,7 @@
                 </section>
                 <section>
                     <h2>New Type</h2>
-                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         // Single element tuple structs (new types)
                         struct Time(f32); // in seconds
                         struct Distance(f32); // in meters
@@ -808,7 +808,7 @@
                 </section>
                 <section>
                     <h2>Enums</h2>
-                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         enum Color {
                             Red,
                             Blue,
@@ -836,7 +836,7 @@
                 </section>
                 <section>
                     <h2>Enums with data</h2>
-                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         enum Color {
                             Black,
                             White,
@@ -864,7 +864,7 @@
                 </section>
                 <section>
                     <h2>Pattern matching</h2>
-                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         enum Color { Black, White, Other(Rgba) }
                         struct Rgba { rgb: u32, a: u8 }
 
@@ -900,7 +900,7 @@
                 </section>
                 <section>
                     <h2>Methods: Constructor</h2>
-                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         struct Color {r: u8, g: u8, b: u8}
 
                         impl Color {
@@ -928,7 +928,7 @@
                 </section>
                 <section>
                     <h2>Methods</h2>
-                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         struct Color {r: u8, g: u8, b: u8}
 
                         impl Color {
@@ -953,7 +953,7 @@
                 </section>
                 <section>
                     <h2>Methods: mutability</h2>
-                    <pre class="fragment fade-out" data-fragment-index="1" style="position:absolute; width: 100%"><code class="rust" data-trim style="max-height: 600px;">
+                    <div class="fragment fade-out" data-fragment-index="1"><pre style="position:absolute; width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         struct Color {r: u8, g: u8, b: u8}
 
                         impl Color {
@@ -970,8 +970,8 @@
                             color.mix(Color::white());
                             assert!(color.b == 255);
                         }
-                    </code></pre>
-                    <pre class="fragment current-visible" data-fragment-index="1" style="position:absolute; width: 100%"><code class="rust" data-trim style="max-height: 600px;">
+                    </code></pre></div>
+                    <div class="fragment current-visible" data-fragment-index="1"><pre style="position:absolute; width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         struct Color {r: u8, g: u8, b: u8}
 
                         impl Color {
@@ -988,8 +988,8 @@
                             color.mix(Color::white());
                             assert!(color.b == 255);
                         }
-                    </code></pre>
-                    <pre class="fragment fade-in" data-fragment-index="2" style="position:absolute; width: 100%"><code class="rust" data-trim style="max-height: 600px;">
+                    </code></pre></div>
+                    <div class="fragment fade-in" data-fragment-index="2"><pre style="position:absolute; width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         struct Color {r: u8, g: u8, b: u8}
 
                         impl Color {
@@ -1008,7 +1008,7 @@
                             color.mix(Color::white());
                             assert!(color.b == 255);
                         }
-                    </code></pre>
+                    </code></pre></div>
                     <aside class="notes" data-markdown>
                         * Panics in debug builds!
                         * `&amp;mut self` as `self` is allowed to change
@@ -1030,7 +1030,7 @@
                 </section>
                 <section>
                     <h2>Traits</h2>
-                    <pre style="width:100%"><code class="rust" data-trim style="max-height: 600px;">
+                    <pre style="width:105%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         trait Reacts {
                             fn react(&self) -> String;
                         }
@@ -1060,7 +1060,7 @@
                 </section>
                 <section>
                     <h2>Deriving Traits</h2>
-                    <pre class="fragment fade-out" data-fragment-index="4" style="position:absolute;width:110%"><code class="rust" data-noescape data-trim style="max-height: 600px;">
+                    <div class="fragment fade-out" data-fragment-index="4"><pre style="position:absolute;width:111%"><code class="rust" data-line-numbers data-noescape data-trim style="max-height: 600px;">
                         // in std: `std::clone::Clone`
                         trait Clone {
                             fn clone(&self) -> Self;
@@ -1080,8 +1080,8 @@
                             <span class="fragment" data-fragment-index="3">// ^^ note: an implementation of `std::cmp::PartialEq`</span>
                             <span class="fragment" data-fragment-index="3">//          might be missing for `Parrot`</span>
                         }
-                    </code></pre>
-                    <pre class="fragment current-visible" data-fragment-index="4" style="position:absolute;width:110%"><code class="rust" data-noescape data-trim style="max-height: 600px;">
+                    </code></pre></div>
+                    <div class="fragment current-visible" data-fragment-index="4"><pre style="position:absolute;width:110%"><code class="rust" data-line-numbers data-noescape data-trim style="max-height: 600px;">
                         // in std: `std::clone::Clone`
                         trait Clone {
                             fn clone(&self) -> Self;
@@ -1099,8 +1099,8 @@
                             let parrot = Parrot { learnt_sentence: String::from("woof") };
                             assert!(parrot == parrot.clone());
                         }
-                    </code></pre>
-                    <pre class="fragment fade-in" data-fragment-index="5" style="position:absolute;width:110%"><code class="rust" data-noescape data-trim style="max-height: 600px;">
+                    </code></pre></div>
+                    <div class="fragment fade-in" data-fragment-index="5"><pre style="position:absolute;width:110%"><code class="rust" data-line-numbers data-noescape data-trim style="max-height: 600px;">
                         // in std: `std::clone::Clone`
                         trait Clone {
                             fn clone(&self) -> Self;
@@ -1113,7 +1113,7 @@
                             let parrot = Parrot { learnt_sentence: String::from("woof") };
                             assert!(parrot == parrot.clone());
                         }
-                    </code></pre>
+                    </code></pre></div>
                     <aside class="notes" data-markdown>
                         * Provide our own clone implementation
                         * Fails: no `==` for `Parrot`
@@ -1125,7 +1125,7 @@
                 </section>
                 <section>
                     <h2>Using Traits</h2>
-                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                    <pre style="width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         trait Reacts {
                             fn react(&self) -> String;
                         }
@@ -1157,7 +1157,7 @@
                 </section>
                 <section>
                     <h2>Generic Data Types</h2>
-                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         trait Reacts {
                             fn react(&self) -> String;
                         }
@@ -1207,7 +1207,7 @@
                 </section>
                 <section>
                     <h2>Option</h2>
-                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         /// Option in core language
                         enum Option&lt;T> {
                             Some(T),
@@ -1235,7 +1235,7 @@
                 </section>
                 <section>
                     <h2>Result</h2>
-                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                    <pre style="width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         /// Result&lt;T, E> in core language
                         enum Result&lt;T, E> {
                             Ok(T),
@@ -1265,7 +1265,7 @@
                 </section>
                 <section>
                     <h2><span><code style="font-size: 1em">?</code> Operator</span></h2>
-                    <pre class="fragment fade-out" data-fragment-index="1" style="position:absolute;"><code class="rust" data-trim style="max-height: 600px;">
+                    <div class="fragment fade-out" data-fragment-index="1"><pre style="position:absolute;"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         fn solve(problem: Option&lt;u32>) -> Option&lt;u32> {
                             let p = match problem {
                                 Some(p) => p,
@@ -1279,8 +1279,8 @@
                             assert_eq!(solve(Some(2)), Some(84));
                             assert_eq!(solve(None), None);
                         }
-                    </code></pre>
-                    <pre class="fragment current-visible" data-fragment-index="1" style="position:absolute;"><code class="rust" data-trim data-noescape style="max-height: 600px;">
+                    </code></pre></div>
+                    <div class="fragment current-visible" data-fragment-index="1"><pre style="position:absolute;"><code class="rust" data-line-numbers data-trim data-noescape style="max-height: 600px;">
                         fn solve(problem: Option&lt;u32>) -> Option&lt;u32> {
                             let p = problem<mark>?</mark>;
 
@@ -1291,8 +1291,8 @@
                             assert_eq!(solve(Some(2)), Some(84));
                             assert_eq!(solve(None), None);
                         }
-                    </code></pre>
-                    <pre class="fragment fade-in" data-fragment-index="2" style="position:absolute;"><code class="rust" data-trim data-noescape style="max-height: 600px;">
+                    </code></pre></div>
+                    <div class="fragment fade-in" data-fragment-index="2"><pre style="position:absolute;"><code class="rust" data-line-numbers data-trim data-noescape style="max-height: 600px;">
                         fn solve(problem: Option&lt;u32>) -> Option&lt;u32> {
                             Some(problem? * 42)
                         }
@@ -1301,7 +1301,7 @@
                             assert_eq!(solve(Some(2)), Some(84));
                             assert_eq!(solve(None), None);
                         }
-                    </code></pre>
+                    </code></pre></div>
                     <aside class="notes" data-markdown>
                     </aside>
                 </section>
@@ -1326,7 +1326,7 @@
                 </section>
                 <section>
                     <h2>Box</h2>
-                    <pre><code class="rust" data-trim style="max-height: 600px;">
+                    <pre style="width:100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         // in std library
                         struct Box&lt;T&gt;(_, _);
 
@@ -1356,7 +1356,7 @@
                 </section>
                 <section>
                     <h2>Vec</h2>
-                    <pre style="width: initial;"><code class="rust" data-trim style="max-height: 600px;">
+                    <pre style="width: initial;"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         fn first_n_ints(n: u32) -> Vec&lt;u32> {
                             let mut ints = Vec::new();
                             for i in 0..n {
@@ -1384,7 +1384,7 @@
                 </section>
                 <section style="width: 115%; left: -7.5%;">
                     <h2>Moving vs Copying</h2>
-                    <pre class="fragment fade-out" data-fragment-index="1" style="position:absolute; width: 100%;"><code class="rust" data-trim style="max-height: 600px;">
+                    <div class="fragment fade-out" data-fragment-index="1"><pre style="position:absolute; width: 102%;"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         fn sum(ns: Box&lt;[u32]>) -> u32 {
                             let mut sum = 0;
                             for n in ns.iter() {
@@ -1398,8 +1398,8 @@
                             let s = sum(nums);
                             assert!(s == 26);
                         }
-                    </code></pre>
-                    <pre class="fragment current-visible" data-fragment-index="1" style="position:absolute; width: 100%;"><code class="rust" data-trim style="max-height: 600px;">
+                    </code></pre></div>
+                    <div class="fragment current-visible" data-fragment-index="1"><pre style="position:absolute; width: 102%;"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         fn sum(ns: Box&lt;[u32]>) -> u32 {
                             let mut sum = 0;
                             for n in ns.iter() {
@@ -1415,8 +1415,8 @@
 
                             let nums2 = nums; //?
                         }
-                    </code></pre>
-                    <pre class="fragment current-visible" data-fragment-index="2" style="position:absolute; width: 100%;"><code class="rust" data-trim style="max-height: 600px;">
+                    </code></pre></div>
+                    <div class="fragment current-visible" data-fragment-index="2"><pre style="position:absolute; width: 102%;"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         fn sum(ns: Box&lt;[u32]>) -> u32 {
                             let mut sum = 0;
                             for n in ns.iter() {
@@ -1436,8 +1436,8 @@
                             //          ^^^^ value used here after move
                         }
                         // error[E0382]: use of moved value: `nums`
-                    </code></pre>
-                    <pre class="fragment current-visible" data-fragment-index="3" style="position:absolute; width: 100%;"><code class="rust" data-trim style="max-height: 600px;">
+                    </code></pre></div>
+                    <div class="fragment current-visible" data-fragment-index="3"><pre style="position:absolute; width: 102%;"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         fn add_2(n: u32) -> u32 {
                             n + 2
                         }
@@ -1449,8 +1449,8 @@
                             // Allowed because `u32` implements `Copy`
                             let n2 = n;
                         }
-                    </code></pre>
-                    <pre class="fragment current-visible" data-fragment-index="4" style="position:absolute; width: 100%;"><code class="rust" data-trim style="max-height: 600px;">
+                    </code></pre></div>
+                    <div class="fragment current-visible" data-fragment-index="4"><pre style="position:absolute; width: 102%;"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         fn sum(ns: Box&lt;[u32]>) -> u32 {
                             let mut sum = 0;
                             for n in ns.iter() {
@@ -1468,8 +1468,8 @@
                             // let s = sum(nums); //< Illegal!
                             assert!(sum(nums2) == 26);
                         }
-                    </code></pre>
-                    <pre class="fragment fade-in" data-fragment-index="5" style="position:absolute; width: 100%;"><code class="rust" data-trim style="max-height: 600px;">
+                    </code></pre></div>
+                    <div class="fragment fade-in" data-fragment-index="5"><pre style="position:absolute; width: 102%;"><code class="rust" data-trim style="max-height: 600px;">
                         fn sum(ns: &[u32]) -> u32 {
                             let mut sum = 0;
                             for n in ns.iter() {
@@ -1487,7 +1487,7 @@
                             // let s = sum(nums.as_ref()); //< Illegal!
                             assert!(sum(nums2.as_ref()) == 26);
                         }
-                    </code></pre>
+                    </code></pre></div>
                     <aside class="notes" data-markdown>
                         * Boxed array (fixed-size) to Boxed slice
                         * Box deallocated in sum!
