@@ -64,8 +64,10 @@
                         <li>Primitive types</li>
                         <li>Ownership</li>
                         <li>Control flow</li>
+                        <li>Code organization</li>
                         <li>Custom data types</li>
                         <li>Error handling</li>
+                        <li>Heap allocated data</li>
                     </ul>
                 </section>
                 <section>
@@ -171,6 +173,7 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
+                        * First use of `assert!`
                     </aside>
                 </section>
                 <section>
@@ -199,9 +202,9 @@
 
                         <span class="fragment" data-fragment-index="4">    let mut s = &amp;y;    assert!(*s == 42);</span>
                         <span class="fragment" data-fragment-index="4">    s = &amp;x;            assert!(*s == 41);</span>
-                        <span class="fragment" data-fragment-index="4">    *s = 4; //< fails to compile!</span>
-                        <span class="fragment" data-fragment-index="4">//  ^^^^^^ `s` is a `&` reference, so the data it refers to</span>
-                        <span class="fragment" data-fragment-index="4">//         cannot be written</span>
+                        <span class="fragment" data-fragment-index="5">    *s = 4;</span><span class="fragment" data-fragment-index="6"> //< fails to compile!</span>
+                        <span class="fragment" data-fragment-index="6">//  ^^^^^^ `s` is a `&` reference, so the data it refers to</span>
+                        <span class="fragment" data-fragment-index="6">//         cannot be written</span>
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
@@ -209,7 +212,7 @@
                 </section>
                 <section>
                     <h2>Reference To Mutable</h2>
-                    <pre><code class="rust" data-trim>
+                    <pre><code class="rust" data-noescape data-trim>
                         fn main() {
                             let mut x = 41;
                             let r: &amp;mut u32 = &amp;mut x;
@@ -219,9 +222,9 @@
                             assert!(*r == 42);
                             assert!(x == 42);
 
-                            let x = 41u32;
+                            <span class="fragment">let x = 41u32;
                             let r: &amp;mut u32 = &amp;mut x; //< fails to compile!
-                            //                ^^^^^^ cannot borrow as mutable
+                            //                ^^^^^^ cannot borrow as mutable</span>
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
@@ -234,11 +237,11 @@
                             let mut x = 41;
 
                             let r = &amp;x;
-                            <span class="fragment" data-fragment-index="2">//      -- immutable borrow occurs here</span>
+                            <span class="fragment" data-fragment-index="3">//      -- immutable borrow occurs here</span>
                             let r_mut = &amp;mut x;
-                            <span class="fragment" data-fragment-index="2">//          ^^^^^^ mutable borrow occurs here</span>
-                            assert!(*r == *r_mut); //< fails to compile!
-                            <span class="fragment" data-fragment-index="2">//      -- immutable borrow later used here</span>
+                            <span class="fragment" data-fragment-index="3">//          ^^^^^^ mutable borrow occurs here</span>
+                            assert!(*r == *r_mut);<span class="fragment" data-fragment-index="2"> //< fails to compile!</span>
+                            <span class="fragment" data-fragment-index="3">//      -- immutable borrow later used here</span>
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
@@ -348,20 +351,33 @@
                             let hello_world: &str = "Hello World 👋!";
 
                             assert!(hello_world.len() == 17); // in bytes!
-                            assert!(hello_world.chars().len() == 14);
+                            assert!(hello_world.chars().count() == 14);
 
                             assert!(&hello_world[..5] == "Hello");
                             assert!(&hello_world[..12] == "Hello World ");
                             assert!(&hello_world[..13] == "Hello World "); //< Panics!
 
                             assert!("".len() == 0);
+                            assert!("\0".len() == 1);
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
-                        * Strings are comlicated
+                        * Strings are complicated
                         * `&str` points to a UTF-8 string
                         * No null-termination
                     </aside>
+                </section>
+                <section>
+                    <h2>Contents</h2>
+                    <ul>
+                        <li style="color: grey;">Primitive types</li>
+                        <li style="color: grey;">Ownership</li>
+                        <li>Control flow</li>
+                        <li>Code organization</li>
+                        <li>Custom data types</li>
+                        <li>Error handling</li>
+                        <li>Heap allocated data</li>
+                    </ul>
                 </section>
                 <section data-markdown class="inline-code">
                     <textarea data-template>
@@ -376,11 +392,12 @@
                         * number bitwise negation (`!`) <span class="fragment" data-fragment-index="1">🚨</span>
                         * compound assignment (`+=`, `|=`, etc.)
                         * **NO**: increment/decrement (`++`, `--`)
-                    </textarea>
-                    <aside class="notes" data-markdown>
+
+                        notes:
+                        * overflow and underflow well defined, 2s-complement in release
                         * logical operations only on `bool`
                         * bitwise negation is non-C
-                    </aside>
+                    </textarea>
                 </section>
                 <section>
                     <h2>Control Flow</h2>
@@ -492,7 +509,7 @@
                     </aside>
                 </section>
                 <section>
-                    <h2>Closures</h2>
+                    <h2>Lambdas & Closures</h2>
                     <pre style="width: initial;"><code class="rust" data-trim style="max-height: 500px;">
                         fn min(a: usize, b: usize) -> usize {
                             if a < b { a } else { b }
@@ -505,8 +522,8 @@
                             assert!(min(1, 2) == 1);
                             assert!(local_min(1, 2) == 1);
 
-                            let closure_min = |a, b| if a < b { a } else { b };
-                            assert!(closure_min(5, 8) == 5);
+                            let lambda_min = |a, b| if a < b { a } else { b };
+                            assert!(lambda_min(5, 8) == 5);
 
                             let a = 4;
                             let min_of_a_and = |b| if a < b { a } else { b };
@@ -542,6 +559,18 @@
                     </aside>
                 </section>
                 <section>
+                    <h2>Contents</h2>
+                    <ul>
+                        <li style="color: grey;">Primitive types</li>
+                        <li style="color: grey;">Ownership</li>
+                        <li style="color: grey;">Control flow</li>
+                        <li>Code organization</li>
+                        <li>Custom data types</li>
+                        <li>Error handling</li>
+                        <li>Heap allocated data</li>
+                    </ul>
+                </section>
+                <section>
                     <h2>Code organization</h2>
                     <ul>
                         <li>Modules</li>
@@ -570,26 +599,28 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
-                        * `mode` use for organizing code in different name spaces
+                        * `mod` used for organizing code in different name spaces
                         * import into current name space using `use`
                     </aside>
                 </section>
                 <section>
                     <h2>Visibility</h2>
-                    <pre style="width: initial"><code class="rust" data-trim style="max-height: 550px;">
+                    <pre style="width: initial"><code class="rust" data-trim style="max-height: 560px;">
                         mod math {
                             pub mod u32 {
                                 pub fn sum(a: u32, b: u32) -> u32 { helper(a, b) }
                                 fn helper(a: u32, b: u32) -> u32 { a + b }
                             }
 
-                            pub fn sum_f32(a: f32, b: f32) -> f32 { a + b }
+                            pub mod f32 {
+                                pub fn sum(a: f32, b: f32) -> f32 { a + b }
+                            }
                         }
 
                         fn main() {
                             assert!(math::u32::sum(15, 5) == 20);
 
-                            use math::sum_f32;
+                            use math::f32::sum as sum_f32;
                             assert!(sum_f32(1.5, 20.5) == 22.0);
 
                             math::u32::helper(1, 2); //< fails to compile!
@@ -597,9 +628,6 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
-                        * `mode` use for organizing code in different name spaces
-                        * import into current name space using `use`
-                        * Note: `use self::` needed hear to desambiguate `u32`
                     </aside>
                 </section>
                 <section>
@@ -652,6 +680,18 @@
                     </aside>
                 </section>
                 <section>
+                    <h2>Contents</h2>
+                    <ul>
+                        <li style="color: grey;">Primitive types</li>
+                        <li style="color: grey;">Ownership</li>
+                        <li style="color: grey;">Control flow</li>
+                        <li style="color: grey;">Code organization</li>
+                        <li>Custom data types</li>
+                        <li>Error handling</li>
+                        <li>Heap allocated data</li>
+                    </ul>
+                </section>
+                <section>
                     <h2>Custom data types</h2>
                     <ul>
                         <li>Data type definitions: Struct and Enum</li>
@@ -660,26 +700,6 @@
                         <li>Traits</li>
                         <li>Generics</li>
                     </ul>
-                </section>
-                <section>
-                    <h2>Struct defintion</h2>
-                    <pre><code class="rust" data-trim style="max-height: 450px;">
-                        struct S {
-                            field1: i32,
-                            field2: f32,
-                        }
-
-                        struct AnotherStruct {
-                            s1: S,
-                            s2: S,
-                        }
-
-                        fn foo(another_s: AnotherStruct) {
-                            if another_s.s1.field1 == another_s.s2.field1 {
-                                println!("field1 matches!");
-                            }
-                        }
-                    </code></pre>
                 </section>
                 <section>
                     <h2>Struct initialization</h2>
@@ -702,20 +722,30 @@
                     </code></pre>
                 </section>
                 <section>
+                    <h2>Struct nesting</h2>
+                    <pre><code class="rust" data-trim style="max-height: 450px;">
+                        struct S {
+                            field1: i32,
+                            field2: f32,
+                        }
+
+                        struct STuple {
+                            s1: S,
+                            s2: S,
+                        }
+
+                        fn foo(s_tup: STuple) {
+                            if s_tup.s1.field1 == s_tup.s2.field1 {
+                                println!("field1 matches!");
+                            }
+                        }
+                    </code></pre>
+                </section>
+                <section>
                     <h2>Tuples</h2>
                     <pre><code class="rust" data-trim style="max-height: 600px;">
-                        fn div_rem(a: isize, b: isize) -> (isize, isize) {
-                            (a / b, a % b)
-                        }
-
                         // Tuple Struct
                         struct Fraction(isize, isize);
-
-                        fn get_quotient(f: Fraction) -> isize {
-                            let Fraction(a, b) = f;
-                            let (quot, _) = div_rem(a, b);
-                            quot
-                        }
 
                         fn main() {
                             let f = Fraction(1, 2);
@@ -723,6 +753,17 @@
 
                             let tup = (5, true, 42.); // type: (isize, bool, f64)
                             assert!(tup.1);
+                        }
+
+                        fn div_rem(a: isize, b: isize) -> (isize, isize) {
+                            (a / b, a % b)
+                        }
+
+
+                        fn get_quotient(f: Fraction) -> isize {
+                            let Fraction(a, b) = f;
+                            let (quot, _) = div_rem(a, b);
+                            quot
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
@@ -749,6 +790,9 @@
                             assert!(avg_speed(d, t).0 > 122.5);
                         }
                     </code></pre>
+                    <aside class="notes" data-markdown>
+                        * Encode quantity in types.
+                    </aside>
                 </section>
                 <section>
                     <h2>Enums</h2>
@@ -961,10 +1005,10 @@
                     </aside>
                 </section>
                 <section>
-                    <h2>Generics and Traits</h2>
+                    <h2>Traits and Generics</h2>
                     <ul>
                         <li>Traits: defining similar behaviors</li>
-                        <li>Generics: abstracting types</li>
+                        <li>Generics: abstracting implementations</li>
                     </ul>
                     <aside class="notes" data-markdown>
                         In C++/Java:
@@ -1130,6 +1174,18 @@
                     </aside>
                 </section>
                 <section>
+                    <h2>Contents</h2>
+                    <ul>
+                        <li style="color: grey;">Primitive types</li>
+                        <li style="color: grey;">Ownership</li>
+                        <li style="color: grey;">Control flow</li>
+                        <li style="color: grey;">Code organization</li>
+                        <li style="color: grey;">Custom data types</li>
+                        <li>Error handling</li>
+                        <li>Heap allocated data</li>
+                    </ul>
+                </section>
+                <section>
                     <h2>Error Handling</h2>
                     <ul>
                         <li>Option</li>
@@ -1161,7 +1217,8 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
-                        * First generic: explain type AND specific instance
+                        * in C: like returning `NULL`
+                        * have to check for `Some`
                     </aside>
                 </section>
                 <section>
@@ -1234,11 +1291,22 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
-                        * First generic: explain type AND specific instance
                     </aside>
                 </section>
                 <section>
-                    <h2>Ownership</h2>
+                    <h2>Contents</h2>
+                    <ul>
+                        <li style="color: grey;">Primitive types</li>
+                        <li style="color: grey;">Ownership</li>
+                        <li style="color: grey;">Control flow</li>
+                        <li style="color: grey;">Code organization</li>
+                        <li style="color: grey;">Custom data types</li>
+                        <li style="color: grey;">Error handling</li>
+                        <li>Heap allocated data</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Heap allocated data</h2>
                     <ul>
                         <li>Smart Pointers: Box, Rc, Vec, String</li>
                         <li>Copying &amp; Moving</li>
@@ -1247,18 +1315,21 @@
                 <section>
                     <h2>Box</h2>
                     <pre><code class="rust" data-trim style="max-height: 600px;">
-                        fn first_hundred_ints() -> Box<[u32; 32]> {
+                        // in std library
+                        struct Box&lt;T&gt;(_, _);
+
+                        fn first_32_numbers() -> Box<[u32; 32]> {
                             let mut ints = Box::new([0; 32]);
                             for i in 0..32 {
                                 ints[i as usize] = i;
                             }
-                            return ints;
+                            ints
                         }
 
                         fn main() {
-                            let many_nums = first_hundred_ints();
+                            let many_nums = first_32_numbers();
                             assert!(many_nums[5] == 5);
-                            let more_nums = first_hundred_ints();
+                            let more_nums = first_32_numbers();
                             assert!(many_nums == more_nums);
 
                             use std::mem::{size_of, size_of_val};
@@ -1274,12 +1345,12 @@
                 <section>
                     <h2>Vec</h2>
                     <pre style="width: initial;"><code class="rust" data-trim style="max-height: 600px;">
-                        fn first_n_ints(n: usize) -> Vec&lt;u32> {
+                        fn first_n_ints(n: u32) -> Vec&lt;u32> {
                             let mut ints = Vec::new();
                             for i in 0..n {
                                 ints.push(i);
                             }
-                            return ints;
+                            ints
                         }
 
                         fn main() {
@@ -1300,7 +1371,7 @@
                     </aside>
                 </section>
                 <section style="width: 115%; left: -7.5%;">
-                    <h2>Moving</h2>
+                    <h2>Moving vs Copying</h2>
                     <pre class="fragment fade-out" data-fragment-index="1" style="position:absolute; width: 100%;"><code class="rust" data-trim style="max-height: 600px;">
                         fn sum(ns: Box&lt;[u32]>) -> u32 {
                             let mut sum = 0;
@@ -1355,6 +1426,19 @@
                         // error[E0382]: use of moved value: `nums`
                     </code></pre>
                     <pre class="fragment current-visible" data-fragment-index="3" style="position:absolute; width: 100%;"><code class="rust" data-trim style="max-height: 600px;">
+                        fn add_2(n: u32) -> u32 {
+                            n + 2
+                        }
+
+                        fn main() {
+                            let n = 3;
+                            assert!(add_2(n));
+
+                            // Allowed because `u32` implements `Copy`
+                            let n2 = n;
+                        }
+                    </code></pre>
+                    <pre class="fragment current-visible" data-fragment-index="4" style="position:absolute; width: 100%;"><code class="rust" data-trim style="max-height: 600px;">
                         fn sum(ns: Box&lt;[u32]>) -> u32 {
                             let mut sum = 0;
                             for n in ns.iter() {
@@ -1373,7 +1457,7 @@
                             assert!(sum(nums2) == 26);
                         }
                     </code></pre>
-                    <pre class="fragment fade-in" data-fragment-index="4" style="position:absolute; width: 100%;"><code class="rust" data-trim style="max-height: 600px;">
+                    <pre class="fragment fade-in" data-fragment-index="5" style="position:absolute; width: 100%;"><code class="rust" data-trim style="max-height: 600px;">
                         fn sum(ns: &[u32]) -> u32 {
                             let mut sum = 0;
                             for n in ns.iter() {
