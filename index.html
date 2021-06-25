@@ -147,6 +147,7 @@
                     </code></pre>
                     <aside class="notes" data-markdown>
                         * No implicit conversions or promotions
+                        * Negative numbers are interepreted as 2s-complement when converted
                     </aside>
                 </section>
                 <section>
@@ -175,7 +176,7 @@
                 </section>
                 <section>
                     <h2>References</h2>
-                    <pre style="position:absolute; width: 100%"><code class="rust" data-noescape data-trim style="max-height: 600px;">
+                    <pre style="position:absolute; width: 100%"><code class="rust" data-noescape data-line-numbers data-trim style="max-height: 600px;">
                         fn main() {
                             let x = 41u32;
                             let r: &amp;u32 = &amp;x;
@@ -234,9 +235,9 @@
                             assert!(*r == 42);
                             assert!(x == 42);
 
-                            <span class="fragment">let x = 41u32;
-                            let r: &amp;mut u32 = &amp;mut x; //< fails to compile!
-                            //                ^^^^^^ cannot borrow as mutable</span>
+                            <span class="fragment" data-fragment-index="2">let x = 41u32;</span>
+                            <span class="fragment" data-fragment-index="2">let r: &amp;mut u32 = &amp;mut x; //< fails to compile!</span>
+                            <span class="fragment" data-fragment-index="2">//                ^^^^^^ cannot borrow as mutable</span>
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
@@ -269,9 +270,9 @@
                             let r_mut = &amp;mut x;
                             <span class="fragment" data-fragment-index="2">//          ------ borrow of `x` occurs here</span>
                             assert!(x == *r_mut); //< fails to compile!
-                            <span class="fragment" data-fragment-index="2">//      ^    ------ borrow later used here
-                            //      |
-                            //      use of borrowed `x`</span>
+                            <span class="fragment" data-fragment-index="2">//      ^    ------ borrow later used here</span>
+                            <span class="fragment" data-fragment-index="2">//      |</span>
+                            <span class="fragment" data-fragment-index="2">//      use of borrowed `x`</span>
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
@@ -416,7 +417,7 @@
                     <ul>
                         <li>If</li>
                         <li>Loops</li>
-                        <li>Functions and Closures</li>
+                        <li>Lambdas and Closures</li>
                         <li>Iterators</li>
                     </ul>
                 </section>
@@ -553,17 +554,17 @@
                     <h2>Iterator: filter + map</h2>
                     <pre><code class="rust" data-line-numbers data-trim style="max-height: 450px;">
                         fn main() {
-                            let mut x = 0;
+                            let mut s = 0;
                             for i in (1..10).filter(|x| x % 2 == 0) {
-                                x += i; // i <- [2, 4, 6, 8]
+                                s += i; // i <- [2, 4, 6, 8]
                             }
-                            assert!(x == 20);
+                            assert!(s == 20);
 
-                            x = 0;
+                            s = 0;
                             for i in (1..5).map(|x| x * 3 + 1)  {
-                                x += i; // i <- [4, 7, 10, 13]
+                                s += i; // i <- [4, 7, 10, 13]
                             }
-                            assert!(x == 34);
+                            assert!(s == 34);
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
@@ -736,8 +737,8 @@
                 <section>
                     <h2>Struct nesting</h2>
                     <pre><code class="rust" data-line-numbers data-trim style="max-height: 450px;">
-                        struct S {
-                            field1: i32,
+                        pub struct S {
+                            pub field1: i32,
                             field2: f32,
                         }
 
@@ -752,6 +753,11 @@
                             }
                         }
                     </code></pre>
+                    <aside class="notes" data-markdown>
+                        field visibility rules same as other data:
+                        * visible for own module and sub-modules
+                        * only visible higher if marked as `pub`
+                    </aside>
                 </section>
                 <section>
                     <h2>Tuples</h2>
@@ -1469,7 +1475,8 @@
                             assert!(sum(nums2) == 26);
                         }
                     </code></pre></div>
-                    <div class="fragment fade-in" data-fragment-index="5"><pre style="position:absolute; width: 102%;"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                    <div class="fragment fade-in" data-fragment-index="5"><pre style="position:absolute; width: 102%;"><code class="rust" data-line-numbers
+                     data-trim style="max-height: 600px;">
                         fn sum(ns: &[u32]) -> u32 {
                             let mut sum = 0;
                             for n in ns.iter() {
