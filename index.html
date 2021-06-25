@@ -670,7 +670,7 @@
                     </aside>
                 </section>
                 <section>
-                    <h2>Files</h2>
+                    <h2>Multi-file crates</h2>
                     <pre style="width: initial">math.rs:<code class="rust" data-line-numbers data-trim style="max-height: 550px;">
                         mod u32 {
                             pub fn sum(a: u32, b: u32) -> u32 { helper(a, b) }
@@ -689,7 +689,31 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
-                        * `pub use` re-exports publicly 
+                        * `mod` without body loads from external file
+                    </aside>
+                </section>
+                <section>
+                    <h2>Multi-file crates</h2>
+                    <pre style="width: initial">math/u32.rs:<code class="rust" data-line-numbers data-trim style="max-height: 550px;">
+                        pub fn sum(a: u32, b: u32) -> u32 { helper(a, b) }
+                        fn helper(a: u32, b: u32) -> u32 { a + b }
+                    </code></pre>
+                    <pre style="width: initial">math.rs:<code class="rust" data-line-numbers data-trim style="max-height: 550px;">
+                        mod u32;
+
+                        pub use self::u32::sum as sum_u32;
+                        pub fn sum_f32(a: f32, b: f32) -> f32 { a + b }
+                    </code></pre>
+                    <pre style="width: initial">bin.rs:<code class="rust" data-line-numbers data-trim style="max-height: 550px;">
+                        mod math;
+
+                        fn main() {
+                            assert!(math::sum_u32(15, 5) == 20);
+                            assert!(math::sum_f32(1.5, 20.5) == 22.0);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * `mod` without body loads from external file
                     </aside>
                 </section>
                 <section>
