@@ -64,10 +64,22 @@
                             <li>These slides: <a href="https://hugwijst.github.io/rust-primer/">hugwijst.github.io/rust-primer</a></li>
                         </ul>
                     </p>
+                </section>
+                <section>
+                    <h2>Using Cargo</h2>
+                    <p>
+                        <ul>
+                            <li><code>cargo init</code></li>
+                            <li><code>cargo check</code></li>
+                            <li><code>cargo build</code></li>
+                            <li><code>cargo run</code></li>
+                            <li><code>cargo test</code></li>
+                        </ul>
+                    </p>
                     <aside class="notes" data-markdown>
-                        * No dynamic memory management, run-time
-                        * Namespacing, file inclusion, lambdas
-                        * Package manager
+                        * `init` is binary by default, `--lib` for library
+                        * Cargo will automatically rebuild if needed (run/test)
+                        * normal build is debug, `--release` for release builds
                     </aside>
                 </section>
                 <section>
