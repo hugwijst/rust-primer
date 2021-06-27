@@ -600,7 +600,7 @@
                     <ul>
                         <li>Modules</li>
                         <li>Visibility</li>
-                        <li>Files</li>
+                        <li>Multi-file crate</li>
                     </ul>
                 </section>
                 <section>
@@ -682,7 +682,7 @@
                     </aside>
                 </section>
                 <section>
-                    <h2>Multi-file crates</h2>
+                    <h2>Multi-file crate</h2>
                     <pre style="width: initial">math.rs:<code class="rust" data-line-numbers data-trim style="max-height: 550px;">
                         mod u32 {
                             pub fn sum(a: u32, b: u32) -> u32 { helper(a, b) }
@@ -702,10 +702,11 @@
                     </code></pre>
                     <aside class="notes" data-markdown>
                         * `mod` without body loads from external file
+                        * `bin.rs` is crate entry point for binaries, `lib.rs` for libraries
                     </aside>
                 </section>
                 <section>
-                    <h2>Multi-file crates</h2>
+                    <h2>Multi-file crate</h2>
                     <pre style="width: initial">math/u32.rs:<code class="rust" data-line-numbers data-trim style="max-height: 550px;">
                         pub fn sum(a: u32, b: u32) -> u32 { helper(a, b) }
                         fn helper(a: u32, b: u32) -> u32 { a + b }
@@ -725,7 +726,10 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
-                        * `mod` without body loads from external file
+                        C/C++ differences:
+                        * no `-I` or include files
+                        * discoverable file and item locations
+                        * no duplicate definition/declaration
                     </aside>
                 </section>
                 <section>
