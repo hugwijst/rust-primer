@@ -256,6 +256,21 @@
                     </aside>
                 </section>
                 <section>
+                    <h2>The Ownership Rule</h2>
+                    <div style="display: table; margin: 0 auto;">
+                        <div style="display: table-cell; padding-right: 1em;">
+                        Either:
+                        </div>
+                        <ul style="display: table-cell;">
+                            <li>Many immutable borrows</li>
+                            <li>One mutable borrow</li>
+                        </ul>
+                    </div>
+                    <aside class="notes" data-markdown>
+                        Whiteboard analogy
+                    </aside>
+                </section>
+                <section>
                     <h2>Ownership 1</h2>
                     <pre><code class="rust" data-line-numbers data-noescape data-trim>
                         fn main() {
