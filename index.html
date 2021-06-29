@@ -893,6 +893,7 @@
                     <aside class="notes" data-markdown>
                         * `match` is not yet discussed
                         * `match` is complete, cannot add more clauses
+                        * enum variants in the namespace of the enum type
                     </aside>
                 </section>
                 <section>
@@ -980,6 +981,7 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
+                        * No special support, but convention
                         * No `self` argument => associated (static) methods
                         * Both constructors
                         * Self == own struct
@@ -1009,7 +1011,9 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
+                        * Methods called with `.`
                         * Note &amp; in `&amp;self`. Will come back to it later.
+                        * ... but, cannot change a `&amp;self`!
                     </aside>
                 </section>
                 <section>
