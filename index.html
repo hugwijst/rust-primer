@@ -966,11 +966,11 @@
                         struct Color {r: u8, g: u8, b: u8}
 
                         impl Color {
-                            fn new(r: u8, g: u8, b: u8) -> Color {
+                            pub fn new(r: u8, g: u8, b: u8) -> Color {
                                 Color { r, g, b }
                             }
 
-                            fn black() -> Self { // Self == Color
+                            pub fn black() -> Self { // Self == Color
                                 Color { r: 0, g: 0, b: 0 }
                             }
                         }
@@ -996,7 +996,7 @@
 
                         impl Color {
                             // ... definitions of `new` and `black` ...
-                            fn intensity(&self) -> u8 {
+                            pub fn intensity(&self) -> u8 {
                                 let r = self.r as u16;
                                 let g = self.g as u16;
                                 let b = self.b as u16;
