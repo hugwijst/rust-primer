@@ -827,7 +827,7 @@
                         }
 
                         fn main() {
-                            let s1 = S { field1: 42, field2: 12.0 };
+                            let s1: S = S { field1: 42, field2: 12.0 };
                             let s2 = S { field2: 18.0, ..s1 };
                             assert!(s2.field1 == 42 && s2.field2 == 18.0);
 
