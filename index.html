@@ -507,7 +507,7 @@
                 </section>
                 <section>
                     <h2>Control flow: loop</h2>
-                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 450px;">
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 475px;">
                         fn main() {
                             let start = 3;
                             let mut x = start;
@@ -517,17 +517,19 @@
                                 x -= 1;
                             }
 
-                            loop {
+                            let end = loop {
                                 println!("up = {}", x);
                                 x += 1;
 
-                                if x >= start { break }
-                            }
+                                if x >= start { break x; }
+                            };
+                            assert!(end == start);
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
-                        * First `println!`!
-                        * No do-while!
+                        * First `println!`
+                        * No do-while
+                        * Loops are expressions too
                     </aside>
                 </section>
                 <section>
@@ -545,7 +547,7 @@
                     </code></pre>
                     <aside class="notes" data-markdown>
                         * `1..5` is a range, 1-inclusive and 5-exclusive
-                        * `for` iterates over een iterator, a range is an iterator
+                        * `for` iterates over an iterator, a range is an iterator
                     </aside>
                 </section>
                 <section>
@@ -596,6 +598,28 @@
                     </code></pre>
                     <aside class="notes" data-markdown>
                         * explain `filter` and `map` methods
+                        * would be better without the `mut s`
+                    </aside>
+                </section>
+                <section>
+                    <h2>Iterator: sum</h2>
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 450px;">
+                        fn main() {
+                            let s: isize = (1..10)
+                                .filter(|x| x % 2 == 0)
+                                .sum();
+                            assert!(s == 20);
+
+                            let s: u32 = (1..5)
+                                .map(|x| x * 3 + 1)
+                                .sum();
+                            assert!(s == 34);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * explain `sum` method
+                        * methods often on separate lines if long
+                        * requires typing because inference has limits
                     </aside>
                 </section>
                 <section>
