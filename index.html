@@ -692,6 +692,7 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
+                        * `helper` called before it is defined!
                     </aside>
                 </section>
                 <section>
@@ -717,7 +718,31 @@
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
-                        * `pub use` re-exports publicly 
+                        * `self` in path context needed to disambiguate from the `u32` builtin type
+                        * `pub use` exports publicly
+                    </aside>
+                </section>
+                <section>
+                    <h2>Multi-file crate</h2>
+                    <pre style="width: initial">bin.rs<code class="rust" data-line-numbers data-trim style="max-height: 550px;">
+                        mod math {
+                            mod u32 {
+                                pub fn sum(a: u32, b: u32) -> u32 { helper(a, b) }
+                                fn helper(a: u32, b: u32) -> u32 { a + b }
+                            }
+
+                            pub use self::u32::sum as sum_u32;
+                            pub fn sum_f32(a: f32, b: f32) -> f32 { a + b }
+                        }
+
+                        fn main() {
+                            assert!(math::sum_u32(15, 5) == 20);
+                            assert!(math::sum_f32(1.5, 20.5) == 22.0);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * `bin.rs` is crate entry point for binaries, `lib.rs` for libraries
+                        * can think of this file as the "root module"
                     </aside>
                 </section>
                 <section>
@@ -741,7 +766,6 @@
                     </code></pre>
                     <aside class="notes" data-markdown>
                         * `mod` without body loads from external file
-                        * `bin.rs` is crate entry point for binaries, `lib.rs` for libraries
                     </aside>
                 </section>
                 <section>
@@ -766,6 +790,7 @@
                     </code></pre>
                     <aside class="notes" data-markdown>
                         C/C++ differences:
+                        * no duplicate symbols during linking
                         * no `-I` or include files
                         * discoverable file and item locations
                         * no duplicate definition/declaration
