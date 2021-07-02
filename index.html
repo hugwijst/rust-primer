@@ -861,6 +861,8 @@
                         field visibility rules same as other data:
                         * visible for own module and sub-modules
                         * only visible higher if marked as `pub`
+
+                        Very different from C++!
                     </aside>
                 </section>
                 <section>
@@ -1012,7 +1014,7 @@
                 <section>
                     <h2>Methods: Constructor</h2>
                     <pre><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
-                        struct Color {r: u8, g: u8, b: u8}
+                        pub struct Color {r: u8, g: u8, b: u8}
 
                         impl Color {
                             pub fn new(r: u8, g: u8, b: u8) -> Color {
