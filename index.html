@@ -1793,16 +1793,16 @@
                     <h2>Heap allocated data</h2>
                     <ul>
                         <li>Smart Pointers: Box, Rc, Vec, String</li>
-                        <li>Copying &amp; Moving</li>
+                        <li>Ownership: Moving vs. Copying</li>
                     </ul>
                 </section>
                 <section>
                     <h2>Box</h2>
                     <pre style="width:100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
-                        // in std library
+                        // std::boxed::Box in std library and prelude
                         struct Box&lt;T&gt;(_, _);
 
-                        fn first_32_numbers() -> Box<[u32; 32]> {
+                        fn first_32_integers() -> Box<[u32; 32]> {
                             let mut ints = Box::new([0; 32]);
                             for i in 0..32 {
                                 ints[i as usize] = i;
@@ -1811,13 +1811,13 @@
                         }
 
                         fn main() {
-                            let many_nums = first_32_numbers();
-                            assert!(many_nums[5] == 5);
-                            let more_nums = first_32_numbers();
-                            assert!(many_nums == more_nums);
+                            let many_ints = first_32_integers();
+                            assert!(many_ints[5] == 5);
+                            let more_ints = first_32_integers();
+                            assert!(many_ints == more_ints);
 
                             use std::mem::{size_of, size_of_val};
-                            assert!(size_of_val(&more_nums) == size_of::&lt;usize>());
+                            assert!(size_of_val(&more_ints) == size_of::&lt;usize>());
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
@@ -1826,36 +1826,8 @@
                         * Size on stack of `Box` is equal to size of a pointer
                     </aside>
                 </section>
-                <section>
-                    <h2>Vec</h2>
-                    <pre style="width: initial;"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
-                        fn first_n_ints(n: u32) -> Vec&lt;u32> {
-                            let mut ints = Vec::new();
-                            for i in 0..n {
-                                ints.push(i);
-                            }
-                            ints
-                        }
-
-                        fn main() {
-                            let mut five_ints = first_n_ints(5);
-                            assert!(five_ints.len() == 5);
-                            assert!(five_ints[4] == 4); //< Panics when out of bounds!
-                            assert!(five_ints.get(5) == None);
-
-                            five_ints.push(42);
-                            assert!(five_ints.len() == 6);
-                        }
-                    </code></pre>
-                    <aside class="notes" data-markdown>
-                        * `Vec`: a contiguous growable array type
-                        * Deallocated when falling out of scope
-                        * Prefer using `Vec::get` to handle out of bounds
-                        * How many length checks in release code? 1!
-                    </aside>
-                </section>
                 <section style="width: 115%; left: -7.5%;">
-                    <h2>Moving vs Copying</h2>
+                    <h2>Ownership: Moving</h2>
                     <div class="fragment fade-out" data-fragment-index="1"><pre style="position:absolute; width: 102%;"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         fn sum(ns: Box&lt;[u32]>) -> u32 {
                             let mut sum = 0;
@@ -1910,19 +1882,6 @@
                         // error[E0382]: use of moved value: `nums`
                     </code></pre></div>
                     <div class="fragment current-visible" data-fragment-index="3"><pre style="position:absolute; width: 102%;"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
-                        fn add_2(n: u32) -> u32 {
-                            n + 2
-                        }
-
-                        fn main() {
-                            let n = 3;
-                            assert!(add_2(n));
-
-                            // Allowed because `u32` implements `Copy`
-                            let n2 = n;
-                        }
-                    </code></pre></div>
-                    <div class="fragment current-visible" data-fragment-index="4"><pre style="position:absolute; width: 102%;"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         fn sum(ns: Box&lt;[u32]>) -> u32 {
                             let mut sum = 0;
                             for n in ns.iter() {
@@ -1941,7 +1900,7 @@
                             assert!(sum(nums2) == 26);
                         }
                     </code></pre></div>
-                    <div class="fragment fade-in" data-fragment-index="5"><pre style="position:absolute; width: 102%;"><code class="rust" data-line-numbers
+                    <div class="fragment fade-in" data-fragment-index="4"><pre style="position:absolute; width: 102%;"><code class="rust" data-line-numbers
                      data-trim style="max-height: 600px;">
                         fn sum(ns: &[u32]) -> u32 {
                             let mut sum = 0;
@@ -1965,6 +1924,163 @@
                         * Boxed array (fixed-size) to Boxed slice
                         * Box deallocated in sum!
                         * Using `nums` after `sum` call?
+                    </aside>
+                </section>
+                <section>
+                    <h2>Ownership: Copying</h2>
+                    <pre><code class="rust" data-line-numbers data-trim data-noescape style="max-height: 600px;">
+                        struct Distance(i32);
+
+                        fn main() {
+                            let d1 = Distance(21);
+                            <span class="fragment" data-fragment-index="2">//  -- move occurs because `d1` has type `Distance`,</span>
+                            <span class="fragment" data-fragment-index="2">//     which does not implement the `Copy` trait</span>
+                            let d2 = d1;
+                            <span class="fragment" data-fragment-index="2">//       -- value moved here</span>
+
+                            assert_eq!(d1.0 + d2.0, 42);
+                            <span class="fragment" data-fragment-index="2">//         ^^^^ value used here after move</span>
+                        }
+                    </code></pre>
+                </section>
+                <section>
+                    <h2>Ownership: Copy trait</h2>
+                    <pre><code class="rust" data-line-numbers data-trim data-noescape style="max-height: 600px;">
+                        // std::marker::Copy in prelude
+
+                        /// Types whose values can be duplicated simply by
+                        /// copying bits.
+                        pub trait Copy: Clone { }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        `Copy` requires `Clone` to be implemented!
+                    </aside>
+                </section>
+                <section>
+                    <h2>Ownership: impl Copy</h2>
+                    <pre><code class="rust" data-line-numbers data-trim data-noescape style="max-height: 600px;">
+                        #[derive(Clone)]
+                        struct Distance(i32);
+
+                        impl Copy for Distance { }
+
+                        fn main() {
+                            let d1 = Distance(21);
+                            let d2 = d1;
+
+                            assert_eq!(d1.0 + d2.0, 42);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * If marked as `Copy`, assignment is *always* a memory copy.
+                        * Can only implement `Copy` if all members are `Copy`.
+                    </aside>
+                </section>
+                <section>
+                    <h2>Ownership: impl Copy</h2>
+                    <pre><code class="rust" data-line-numbers data-trim data-noescape style="max-height: 600px;">
+                        #[derive(Clone, <mark>Copy</mark>)]
+                        struct Distance(i32);
+
+                        fn main() {
+                            let d1 = Distance(21);
+                            let d2 = d1;
+
+                            assert_eq!(d1.0 + d2.0, 42);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * If marked as `Copy`, assignment is *always* a memory copy.
+                        * Can only implement `Copy` if all members are `Copy`.
+                    </aside>
+                </section>
+                <section>
+                    <h2>Rc</h2>
+                    <pre style="width: initial;"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                        use std::rc::Rc;
+                        fn main() {
+                            let rc_int = Rc::new(42);
+                            assert_eq!(*rc_int, 42);
+                            assert_eq!(Rc::strong_count(&rc_int), 1);
+
+                            {
+                                let rc_int2 = Rc::clone(&rc_int);
+                                assert_eq!(rc_int, rc_int2);
+                                assert_eq!(Rc::strong_count(&rc_int), 2);
+                                assert!(Rc::ptr_eq(&rc_int, &rc_int2));
+                            }
+
+                            assert_eq!(Rc::strong_count(&rc_int), 1);
+
+                            assert_eq!(rc_int, Rc::new(42));
+                            assert!(Rc::ptr_eq(&rc_int, &Rc::new(42)) == false);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * `Rc`: reference counted, heap allocated data
+                        * Can clone using `clone` method, but `Rc::clone` is idiomatic
+                        * Tracks number of references internally, use `strong_count` to get value
+                        * Decrements count when falling out of scope, deallocates when reaches 0
+                        * `Rc::eq` based on equality of contents, `Rc::ptr_eq` to check for same instance
+                    </aside>
+                </section>
+                <section>
+                    <h2>Vec</h2>
+                    <pre style="width: initial;"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                        fn first_n_ints(n: u32) -> Vec&lt;u32> {
+                            let mut ints = Vec::new();
+                            for i in 0..n {
+                                ints.push(i);
+                            }
+                            ints
+                        }
+
+                        fn main() {
+                            let mut five_ints = first_n_ints(5);
+                            assert!(five_ints.len() == 5);
+                            assert!(five_ints[4] == 4); //< Panics when out of bounds!
+                            assert!(five_ints.get(5) == None);
+
+                            five_ints.push(42);
+                            assert!(five_ints.len() == 6);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * `Vec`: a contiguous growable array type
+                        * Deallocated when owner falls out of scope
+                        * Prefer using `Vec::get` to handle out of bounds
+                        * How many length checks in release code? 2: 1 before push and 1 after.
+                    </aside>
+                </section>
+                <section>
+                    <h2>String</h2>
+                    <pre style="width: initial;"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                        fn main() {
+                            let mut hi = String::with_capacity(20);
+                            hi.push_str("Hello");
+                            hi.push_str(" World");
+                            hi.push('!');
+
+                            assert_eq!(hi, "Hello World!");
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * `String`: heap allocated string
+                        * Deallocated when owner falls out of scope
+                        * Can use `String::new` too
+                        * Prefer: `format!` over `push_str` unless speed/memory is concern
+                    </aside>
+                </section>
+                <section>
+                    <h2><span><code>std::collections</code></span></h2>
+                    <ul>
+                        <li>Sequences: <span><code>Vec</code>, <code>VecDeque</code>, <code>LinkedList</code></span></li>
+                        <li>Maps: <span><code>HashMap</code>, <code>BTreeMap</code></span></li>
+                        <li>Sets: <span><code>HashSet</code>, <code>BTreeSet</code></span></li>
+                        <li>Misc: <span><code>BinaryHeap</code></span></li>
+                    </ul>
+                    <aside class="notes" data-markdown>
+                        * `VecDeque`: double-ended queue
                     </aside>
                 </section>
                 <section>
