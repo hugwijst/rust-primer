@@ -1272,6 +1272,274 @@
                     </aside>
                 </section>
                 <section>
+                    <h2>Example: Generics</h2>
+                    <div class="fragment fade-out" data-fragment-index="1">
+                        <pre style="position: absolute;width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                            trait Reacts { fn react(&self) -> String; }
+                            struct Cat {}
+                            impl Reacts for Cat {
+                                fn react(&self) -> String { String::from("meow") }
+                            }
+
+                            fn loud_reaction&lt;R: Reacts&gt;(reactor: &R) -> String {
+                                format!("{}!", reactor.react().to_uppercase())
+                            }
+
+                            fn main() {
+                                assert_eq!(loud_reaction(&Cat {}), "MEOW!");
+                            }
+                        </code></pre>
+                    </div>
+                    <div class="fragment current-visible" data-fragment-index="1">
+                        <pre style="position: absolute;width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                            trait Reacts { fn react(&self) -> String; }
+                            struct Cat {}
+                            impl Reacts for Cat {
+                                fn react(&self) -> String { String::from("meow") }
+                            }
+
+                            fn loud_reaction&lt;R: Reacts&gt;(reactor: &R) -> String {
+                                format!("{}!", reactor.react().to_uppercase())
+                            }
+
+                            fn main() {
+                                assert_eq!(loud_reaction::&lt;Cat&gt;(&Cat {}), "MEOW!");
+                            }
+                        </code></pre>
+                    </div>
+                    <div class="fragment current-visible" data-fragment-index="2">
+                        <pre style="position: absolute;width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                            trait Reacts { fn react(&self) -> String; }
+                            struct Cat {}
+                            impl Reacts for Cat {
+                                fn react(&self) -> String { String::from("meow") }
+                            }
+
+                            fn loud_reaction::&lt;Cat&gt;(reactor: &Cat) -> String {
+                                format!("{}!", reactor.react().to_uppercase())
+                            }
+
+                            fn main() {
+                                assert_eq!(loud_reaction::&lt;Cat&gt;(&Cat {}), "MEOW!");
+                            }
+                        </code></pre>
+                    </div>
+                    <div class="fragment current-visible" data-fragment-index="3">
+                        <pre style="position: absolute;width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                            trait Reacts { fn react(&self) -> String; }
+                            struct Cat {}
+                            impl Reacts for Cat {
+                                fn react(&self) -> String { String::from("meow") }
+                            }
+
+                            fn loud_reaction::&lt;Cat&gt;(reactor: &Cat) -> String {
+                                format!("{}!", Cat::react(reactor).to_uppercase())
+                            }
+
+                            fn main() {
+                                assert_eq!(loud_reaction::&lt;Cat&gt;(&Cat {}), "MEOW!");
+                            }
+                        </code></pre>
+                    </div>
+                    <div class="fragment current-visible" data-fragment-index="4">
+                        <pre style="position: absolute;width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                            trait Reacts { fn react(&self) -> String; }
+                            struct Cat {}
+                            impl Reacts for Cat {
+                                fn react(&self) -> String { String::from("meow") }
+                            }
+
+                            fn loud_reaction::&lt;Cat&gt;(reactor: &Cat) -> String {
+                                format!("{}!", String::from("meow").to_uppercase())
+                            }
+
+                            fn main() {
+                                assert_eq!(loud_reaction::&lt;Cat&gt;(&Cat {}), "MEOW!");
+                            }
+                        </code></pre>
+                    </div>
+                    <div class="fragment current-visible" data-fragment-index="5">
+                        <pre style="position: absolute;width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                            trait Reacts { fn react(&self) -> String; }
+                            struct Cat {}
+                            impl Reacts for Cat {
+                                fn react(&self) -> String { String::from("meow") }
+                            }
+
+                            fn loud_reaction::&lt;Cat&gt;(reactor: &Cat) -> String {
+                                format!("{}!", String::from("meow").to_uppercase())
+                            }
+
+                            fn main() {
+                                assert_eq!(
+                                    format!("{}!", String::from("meow").to_uppercase()),
+                                    "MEOW!"
+                                );
+                            }
+                        </code></pre>
+                    </div>
+                    <div class="fragment current-visible" data-fragment-index="6">
+                        <pre style="position: absolute;width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                            // trait Reacts { fn react(&self) -> String; }
+                            // struct Cat {}
+                            // impl Reacts for Cat {
+                            //     fn react(&self) -> String { String::from("meow") }
+                            // }
+
+                            // fn loud_reaction::&lt;Cat&gt;(reactor: &Cat) -> String {
+                            //     format!("{}!", String::from("meow").to_uppercase())
+                            // }
+
+                            fn main() {
+                                assert_eq!(
+                                    format!("{}!", String::from("meow").to_uppercase()),
+                                    "MEOW!"
+                                );
+                            }
+                        </code></pre>
+                    </div>
+                    <aside class="notes" data-markdown>
+                        * *Note*: `::&lt;Cat&gt;` is not valid function name!
+                    </aside>
+                </section>
+                <section>
+                    <h2>Example: Dynamic Reference</h2>
+                    <div class="fragment fade-out" data-fragment-index="1">
+                        <pre style="position: absolute;width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                            trait Reacts { fn react(&self) -> String; }
+                            struct Cat {}
+                            impl Reacts for Cat {
+                                fn react(&self) -> String { String::from("meow") }
+                            }
+
+                            fn loud_reaction(reactor: &dyn Reacts) -> String {
+                                format!("{}!", reactor.react().to_uppercase())
+                            }
+
+                            fn main() {
+                                assert_eq!(loud_reaction(&Cat {}), "MEOW!");
+                            }
+                        </code></pre>
+                    </div>
+                    <div class="fragment current-visible" data-fragment-index="1">
+                        <pre style="position: absolute;width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                            trait Reacts { fn react(&self) -> String; }
+                            struct Cat {}
+                            impl Reacts for Cat {
+                                fn react(&self) -> String { String::from("meow") }
+                            }
+
+                            struct ReactsFns__ { react: fn(&self) -> String, }
+                            const CAT_REACTS_IMPL__: ReactsFns__ = ReactsFns__ {
+                                react: Cat::react,
+                            };
+
+                            fn loud_reaction(reactor: &dyn Reacts) -> String {
+                                format!("{}!", reactor.react().to_uppercase())
+                            }
+
+                            fn main() {
+                                assert_eq!(loud_reaction(&Cat {}), "MEOW!");
+                            }
+                        </code></pre>
+                    </div>
+                    <div class="fragment current-visible" data-fragment-index="2">
+                        <pre style="position: absolute;width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                            trait Reacts { fn react(&self) -> String; }
+                            struct Cat {}
+                            impl Reacts for Cat {
+                                fn react(&self) -> String { String::from("meow") }
+                            }
+
+                            struct ReactsFns__ { react: fn(&self) -> String, }
+                            const CAT_REACTS_IMPL__: ReactsFns__ = ReactsFns__ {
+                                react: Cat::react,
+                            };
+
+                            fn loud_reaction(reactor: (&self, &ReactsFns__)) -> String {
+                                format!("{}!", reactor.react().to_uppercase())
+                            }
+
+                            fn main() {
+                                assert_eq!(loud_reaction(&Cat {}), "MEOW!");
+                            }
+                        </code></pre>
+                    </div>
+                    <div class="fragment current-visible" data-fragment-index="3">
+                        <pre style="position: absolute;width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                            trait Reacts { fn react(&self) -> String; }
+                            struct Cat {}
+                            impl Reacts for Cat {
+                                fn react(&self) -> String { String::from("meow") }
+                            }
+
+                            struct ReactsFns__ { react: fn(&self) -> String, }
+                            const CAT_REACTS_IMPL__: ReactsFns__ = ReactsFns__ {
+                                react: Cat::react,
+                            };
+
+                            fn loud_reaction((s, fns): (&self, &ReactsFns__)) -> String {
+                                format!("{}!", (fns.react)(s).to_uppercase())
+                            }
+
+                            fn main() {
+                                assert_eq!(loud_reaction(&Cat {}), "MEOW!");
+                            }
+                        </code></pre>
+                    </div>
+                    <div class="fragment current-visible" data-fragment-index="4">
+                        <pre style="position: absolute;width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                            trait Reacts { fn react(&self) -> String; }
+                            struct Cat {}
+                            impl Reacts for Cat {
+                                fn react(&self) -> String { String::from("meow") }
+                            }
+
+                            struct ReactsFns__ { react: fn(&self) -> String, }
+                            const CAT_REACTS_IMPL__: ReactsFns__ = ReactsFns__ {
+                                react: Cat::react,
+                            };
+
+                            fn loud_reaction((s, fns): (&self, &ReactsFns__)) -> String {
+                                format!("{}!", (fns.react)(s).to_uppercase())
+                            }
+
+                            fn main() {
+                                let dyn_ref = (&Cat {}, &CAT_REACTS_IMPL__);
+                                assert_eq!(loud_reaction(dyn_ref), "MEOW!");
+                            }
+                        </code></pre>
+                    </div>
+                    <div class="fragment current-visible" data-fragment-index="5">
+                        <pre style="position: absolute;width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                            trait Reacts { fn react(&self) -> String; }
+                            struct Cat {}
+                            impl Reacts for Cat {
+                                fn react(&self) -> String { String::from("meow") }
+                            }
+
+                            struct ReactsFns__ { react: fn(&Cat) -> String, }
+                            const CAT_REACTS_IMPL__: ReactsFns__ = ReactsFns__ {
+                                react: Cat::react,
+                            };
+
+                            fn loud_reaction((s, fns): (&Cat, &ReactsFns__)) -> String {
+                                format!("{}!", (fns.react)(s).to_uppercase())
+                            }
+
+                            fn main() {
+                                let dyn_ref = (&Cat {}, &CAT_REACTS_IMPL__);
+                                assert_eq!(loud_reaction(dyn_ref), "MEOW!");
+                            }
+                        </code></pre>
+                    </div>
+                    <aside class="notes" data-markdown>
+                        * Note: Doesn't compile from slide 2 unwards: `&self` outside of `impl`.
+                        * Shows how to create references to functions.
+                        * Final slide does compile, though no longer dynamic over all types.
+                    </aside>
+                </section>
+                <section>
                     <h2>Generic Data Types</h2>
                     <pre><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
                         trait Reacts {
