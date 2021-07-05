@@ -1592,11 +1592,12 @@
                 <section>
                     <h2>Option</h2>
                     <pre><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
-                        /// Option in core language
+                        /// std::option::Option in core language and prelude
                         enum Option&lt;T> {
                             Some(T),
                             None,
                         }
+                        use Option::*;
 
                         // In the core language as: `a.checked_div(b)`.
                         fn safe_div(a: usize, b: usize) -> Option&lt;usize> {
@@ -1608,19 +1609,104 @@
                         }
 
                         fn main() {
-                            assert!(safe_div(1, 0) == None);
                             assert!(safe_div(1, 2) == Some(0));
+                            assert!(safe_div(1, 0) == None);
                         }
                     </code></pre>
                     <aside class="notes" data-markdown>
+                        * `Option` and its variants in prelude
                         * in C: like returning `NULL`
                         * have to check for `Some`
                     </aside>
                 </section>
                 <section>
+                    <h2>Option: unwrap</h2>
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                        /// std::option::Option in core language and prelude
+                        enum Option&lt;T> {
+                            Some(T),
+                            None,
+                        }
+                        use Option::*;
+
+                        impl&lt;T> Option&lt;T> {
+                            pub fn unwrap(self) -> T {
+                                match self {
+                                    Some(val) => val,
+                                    None => panic!(/* ... */),
+                                }
+                            }
+                        }
+
+                        fn main() {
+                            assert!(1u8.checked_div(2).unwrap() == 0);
+                            assert!(1u8.checked_div(0).unwrap() == 0); //< PANICS!
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * can use `unwrap` if you know value is `Some`
+                    </aside>
+                </section>
+                <section>
+                    <h2>Option: unwrap_or</h2>
+                    <pre><code class="rust" data-line-numbers data-trim style="max-height: 600px; width: 105%;">
+                        /// std::option::Option in core language and prelude
+                        enum Option&lt;T> {
+                            Some(T),
+                            None,
+                        }
+                        use Option::*;
+
+                        impl&lt;T> Option&lt;T> {
+                            pub fn unwrap_or(self, default: T) -> T {
+                                match self {
+                                    Some(x) => x,
+                                    None => default,
+                                }
+                            }
+                        }
+
+                        fn main() {
+                            assert!(1u8.checked_div(2).unwrap_or(u8::MAX) == 0);
+                            assert!(1u8.checked_div(0).unwrap_or(u8::MAX) == 0xFF);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * provide default value if `None`
+                    </aside>
+                </section>
+                <section>
+                    <h2>Option: map</h2>
+                    <pre style="width: 100%;"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
+                        /// std::option::Option in core language and prelude
+                        enum Option&lt;T> {
+                            Some(T),
+                            None,
+                        }
+                        use Option::*;
+
+                        impl&lt;T> Option&lt;T> {
+                            pub fn map&lt;U, F: FnOnce(T) -> U>(self, f: F) -> Option&lt;U> {
+                                match self {
+                                    Some(x) => Some(f(x)),
+                                    None => None,
+                                }
+                            }
+                        }
+
+                        fn main() {
+                            assert!(3u8.checked_div(2).map(|x| x*2) == Some(2));
+                            assert!(1u8.checked_div(0).map(|x| x*2) == None);
+                        }
+                    </code></pre>
+                    <aside class="notes" data-markdown>
+                        * provide default value if `None`
+                    </aside>
+                </section>
+                <section>
                     <h2>Result</h2>
                     <pre style="width: 100%"><code class="rust" data-line-numbers data-trim style="max-height: 600px;">
-                        /// Result&lt;T, E> in core language
+                        /// std::result::Result&lt;T, E> in core language and prelude
                         enum Result&lt;T, E> {
                             Ok(T),
                             Err(E),
@@ -1687,6 +1773,8 @@
                         }
                     </code></pre></div>
                     <aside class="notes" data-markdown>
+                        * First `return` in a long time!
+                        * Type of `p`: `u32`!
                     </aside>
                 </section>
                 <section>
